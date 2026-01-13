@@ -11,6 +11,15 @@ interface WeeklyMealsProps {
 
 const WeeklyMeals: React.FC<WeeklyMealsProps> = ({ className, meals, onMealsChange }) => {
   const [isContainerCollapsed, setIsContainerCollapsed] = useState(false);
+  const [showIngredients, setShowIngredients] = useState<{[key: string]: boolean}>({});
+
+  const toggleIngredients = useCallback((mealId: string, index: number) => {
+    const key = `${mealId}-${index}`;
+    setShowIngredients(prev => ({
+      ...prev,
+      [key]: !prev[key]
+    }));
+  }, []);
 
   const removeMeal = useCallback((mealIndex: number) => {
     const newMeals = meals.filter((_, index) => index !== mealIndex);
@@ -53,10 +62,22 @@ const WeeklyMeals: React.FC<WeeklyMealsProps> = ({ className, meals, onMealsChan
                             <span className="meal-emoji">{meal.emoji}</span>
                             <div className="meal-details">
                               <div className="meal-name">{meal.name}</div>
-                              <div className="meal-category">{meal.category}</div>
-                              <div className="meal-ingredients">
-                                {meal.ingredients.join(', ')}
-                              </div>
+                              <button 
+                                className="show-ingredients-btn"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  toggleIngredients(meal.id, index);
+                                }}
+                              >
+                                <span className={`ingredients-arrow ${showIngredients[`${meal.id}-${index}`] ? 'expanded' : ''}`}>◀</span>
+                              </button>
+                              {showIngredients[`${meal.id}-${index}`] && (
+                                <ul className="meal-ingredients-list">
+                                  {meal.ingredients.map((ingredient, idx) => (
+                                    <li key={idx}>{ingredient}</li>
+                                  ))}
+                                </ul>
+                              )}
                             </div>
                           </div>
                           <button 

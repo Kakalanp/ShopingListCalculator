@@ -96,24 +96,7 @@ interface RecipeListProps {
 
 const RecipeList: React.FC<RecipeListProps> = ({ className }) => {
   const [recipes, setRecipes] = useState<Recipe[]>(initialRecipes);
-  const [expandedCategories, setExpandedCategories] = useState<Set<string>>(
-    new Set(['Breakfast', 'Lunch', 'Dinner', 'Snacks'])
-  );
   const [isContainerCollapsed, setIsContainerCollapsed] = useState(false);
-
-  const categories = Array.from(new Set(recipes.map(recipe => recipe.category)));
-
-  const toggleCategory = (category: string) => {
-    setExpandedCategories(prev => {
-      const newSet = new Set(prev);
-      if (newSet.has(category)) {
-        newSet.delete(category);
-      } else {
-        newSet.add(category);
-      }
-      return newSet;
-    });
-  };
 
   const deleteRecipe = (recipeId: string) => {
     setRecipes(prev => prev.filter(recipe => recipe.id !== recipeId));
@@ -134,66 +117,43 @@ const RecipeList: React.FC<RecipeListProps> = ({ className }) => {
             <div
               {...provided.droppableProps}
               ref={provided.innerRef}
-              className="categories-container"
+              className="recipes-grid expanded"
             >
-          {categories.map(category => {
-            const categoryRecipes = recipes.filter(recipe => recipe.category === category);
-            const isExpanded = expandedCategories.has(category);
-            
-            if (categoryRecipes.length === 0) return null;
-            
-            return (
-              <div key={category} className="category-section">
-                <h3 
-                  className="category-title clickable" 
-                  onClick={() => toggleCategory(category)}
+              {recipes.map((recipe, index) => (
+                <Draggable
+                  key={recipe.id}
+                  draggableId={`recipe-${recipe.id}`}
+                  index={index}
                 >
-                  <span className={`expand-icon ${isExpanded ? 'expanded' : ''}`}>▶</span>
-                  {category} ({categoryRecipes.length})
-                </h3>
-                <div className={`recipes-grid ${isExpanded ? 'expanded' : 'collapsed'}`}>
-                  {isExpanded && categoryRecipes.map((recipe, index) => {
-                    const globalIndex = recipes.findIndex(r => r.id === recipe.id);
-                    return (
-                      <Draggable
-                        key={recipe.id}
-                        draggableId={`recipe-${recipe.id}`}
-                        index={globalIndex}
+                  {(provided: any, snapshot: any) => (
+                    <div 
+                      ref={provided.innerRef}
+                      {...provided.draggableProps}
+                      {...provided.dragHandleProps}
+                      className={`recipe-item ${snapshot.isDragging ? 'dragging' : ''}`}
+                    >
+                      <div className="recipe-content">
+                        <span className="recipe-emoji">{recipe.emoji}</span>
+                        <div className="recipe-details">
+                          <div className="recipe-name">{recipe.name}</div>
+                          <div className="recipe-count">{recipe.ingredients.length} items</div>
+                        </div>
+                      </div>
+                      <button 
+                        className="delete-recipe-btn"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          deleteRecipe(recipe.id);
+                        }}
+                        title="Remove recipe"
                       >
-                        {(provided: any, snapshot: any) => (
-                          <div 
-                            ref={provided.innerRef}
-                            {...provided.draggableProps}
-                            {...provided.dragHandleProps}
-                            className={`recipe-item ${snapshot.isDragging ? 'dragging' : ''}`}
-                          >
-                            <div className="recipe-content">
-                              <span className="recipe-emoji">{recipe.emoji}</span>
-                              <div className="recipe-details">
-                                <div className="recipe-name">{recipe.name}</div>
-                                <div className="recipe-count">{recipe.ingredients.length} items</div>
-                              </div>
-                            </div>
-                            <button 
-                              className="delete-recipe-btn"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                deleteRecipe(recipe.id);
-                              }}
-                              title="Remove recipe"
-                            >
-                              ×
-                            </button>
-                          </div>
-                        )}
-                      </Draggable>
-                    );
-                  })}
-                </div>
-              </div>
-            );
-          })}
-            {provided.placeholder}
+                        ×
+                      </button>
+                    </div>
+                  )}
+                </Draggable>
+              ))}
+              {provided.placeholder}
             </div>
           )}
         </Droppable>
