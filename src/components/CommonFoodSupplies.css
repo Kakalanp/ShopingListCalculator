@@ -1,0 +1,262 @@
+.common-foods-container {
+  background: white;
+  border-radius: 12px;
+  padding: 0;
+  height: fit-content;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e1e5e9;
+  transition: all 0.3s ease;
+  overflow: hidden;
+}
+
+.common-foods-container.collapsed {
+  width: 60px;
+}
+
+.container-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  cursor: pointer;
+  background: #f8f9fa;
+  border-bottom: 1px solid #e1e5e9;
+  transition: all 0.2s ease;
+}
+
+.container-header:hover {
+  background: #e9ecef;
+}
+
+.common-foods-container.collapsed .container-header {
+  padding: 20px 15px;
+  justify-content: center;
+}
+
+.common-foods-container h2 {
+  margin: 0;
+  font-size: 1.5rem;
+  color: #2c3e50;
+  font-weight: 600;
+  transition: opacity 0.3s ease;
+}
+
+.common-foods-container.collapsed h2 {
+  display: none;
+}
+
+.container-expand-icon {
+  font-size: 1.2rem;
+  color: #7f8c8d;
+  transition: all 0.3s ease;
+}
+
+.container-expand-icon.expanded {
+  transform: rotate(180deg);
+  color: #3498db;
+}
+
+.container-content {
+  padding: 20px;
+  transition: all 0.3s ease;
+  overflow: hidden;
+}
+
+.container-content.collapsed {
+  max-height: 0;
+  padding: 0 20px;
+  opacity: 0;
+}
+
+.container-content.expanded {
+  max-height: 80vh;
+  opacity: 1;
+}
+
+.drag-instruction {
+  margin: 0 0 20px 0;
+  font-size: 0.9rem;
+  color: #7f8c8d;
+  font-style: italic;
+}
+
+.categories-container {
+  max-height: 60vh;
+  overflow-y: auto;
+  transition: all 0.3s ease;
+}
+
+.category-section {
+  margin-bottom: 24px;
+}
+
+.category-section:last-child {
+  margin-bottom: 0;
+}
+
+.category-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #34495e;
+  margin: 0 0 12px 0;
+  padding: 8px 12px;
+  border-bottom: 2px solid #ecf0f1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+}
+
+.category-title.clickable {
+  cursor: pointer;
+  border-radius: 6px;
+}
+
+.category-title.clickable:hover {
+  background: #f8f9fa;
+  color: #2c3e50;
+}
+
+.expand-icon {
+  font-size: 0.8rem;
+  transition: transform 0.2s ease;
+  color: #7f8c8d;
+}
+
+.expand-icon.expanded {
+  transform: rotate(90deg);
+  color: #3498db;
+}
+
+.foods-grid {
+  display: grid;
+  gap: 8px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.foods-grid.collapsed {
+  max-height: 0;
+  margin: 0;
+  opacity: 0;
+}
+
+.foods-grid.expanded {
+  max-height: 1000px;
+  opacity: 1;
+}
+
+.food-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.food-item:hover {
+  background: #e3f2fd;
+  border-color: #2196f3;
+  transform: translateX(4px);
+}
+
+.food-item.dragging {
+  opacity: 0.8;
+  transform: rotate(3deg);
+}
+
+.drag-section {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+  cursor: grab;
+}
+
+.drag-section:active {
+  cursor: grabbing;
+}
+
+.food-emoji {
+  font-size: 1.4rem;
+  margin-right: 10px;
+  flex-shrink: 0;
+}
+
+.food-name {
+  font-weight: 500;
+  color: #2c3e50;
+  font-size: 0.95rem;
+  flex: 1;
+}
+
+.delete-food-btn {
+  background: none;
+  border: none;
+  color: #95a5a6;
+  font-size: 1.2rem;
+  font-weight: bold;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  line-height: 1;
+}
+
+.delete-food-btn:hover {
+  background: #e74c3c;
+  color: white;
+  transform: scale(1.1);
+}
+
+.delete-food-btn:active {
+  transform: scale(0.95);
+}
+
+/* Custom scrollbar */
+.categories-container::-webkit-scrollbar {
+  width: 6px;
+}
+
+.categories-container::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+
+.categories-container::-webkit-scrollbar-thumb {
+  background: #bdc3c7;
+  border-radius: 3px;
+}
+
+.categories-container::-webkit-scrollbar-thumb:hover {
+  background: #95a5a6;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .common-foods-container {
+    margin-bottom: 20px;
+  }
+  
+  .common-foods-container.collapsed {
+    width: auto;
+    height: 60px;
+  }
+  
+  .common-foods-container.collapsed .container-header {
+    padding: 20px;
+    justify-content: space-between;
+  }
+  
+  .common-foods-container.collapsed h2 {
+    display: block;
+  }
+  
+  .categories-container {
+    max-height: 40vh;
+  }
+}

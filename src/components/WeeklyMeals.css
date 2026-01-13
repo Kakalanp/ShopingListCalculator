@@ -1,0 +1,250 @@
+.weekly-meals-container {
+  background: white;
+  border-radius: 12px;
+  padding: 0;
+  height: fit-content;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e1e5e9;
+  transition: all 0.3s ease;
+  overflow: hidden;
+}
+
+.weekly-meals-container.collapsed {
+  width: 60px;
+}
+
+.container-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  cursor: pointer;
+  background: #f3e5f5;
+  border-bottom: 1px solid #e1e5e9;
+  transition: all 0.2s ease;
+}
+
+.container-header:hover {
+  background: #e1bee7;
+}
+
+.weekly-meals-container.collapsed .container-header {
+  padding: 20px 15px;
+  justify-content: center;
+}
+
+.weekly-meals-container h2 {
+  margin: 0;
+  font-size: 1.5rem;
+  color: #7b1fa2;
+  font-weight: 600;
+  transition: opacity 0.3s ease;
+}
+
+.weekly-meals-container.collapsed h2 {
+  display: none;
+}
+
+.container-expand-icon {
+  font-size: 1.2rem;
+  color: #7b1fa2;
+  transition: all 0.3s ease;
+}
+
+.container-expand-icon.expanded {
+  transform: rotate(180deg);
+  color: #9c27b0;
+}
+
+.container-content {
+  padding: 20px;
+  transition: all 0.3s ease;
+  overflow: hidden;
+}
+
+.container-content.collapsed {
+  max-height: 0;
+  padding: 0 20px;
+  opacity: 0;
+}
+
+.container-content.expanded {
+  max-height: 80vh;
+  opacity: 1;
+}
+
+.meals-instruction {
+  margin: 0 0 20px 0;
+  font-size: 0.9rem;
+  color: #7b1fa2;
+  font-style: italic;
+}
+
+.meals-container {
+  min-height: 200px;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  max-height: 60vh;
+  overflow-y: auto;
+}
+
+.meals-container.dragging-over {
+  background-color: #fce4ec;
+  border: 2px dashed #e91e63;
+}
+
+.empty-meals {
+  text-align: center;
+  padding: 40px 20px;
+  color: #ba68c8;
+  font-size: 1rem;
+}
+
+.empty-meals p {
+  margin: 8px 0;
+}
+
+.empty-meals p:first-child {
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+
+.meal-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #fafafa;
+  border: 1px solid #e8eaf6;
+  border-radius: 8px;
+  margin-bottom: 12px;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.meal-item:hover {
+  background: #f3e5f5;
+  border-color: #9c27b0;
+  transform: translateX(2px);
+}
+
+.meal-item.dragging {
+  opacity: 0.8;
+  transform: rotate(2deg);
+}
+
+.drag-section {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+  cursor: grab;
+  padding: 12px;
+}
+
+.drag-section:active {
+  cursor: grabbing;
+}
+
+.drag-handle {
+  color: #9e9e9e;
+  font-size: 1.2rem;
+  cursor: grab;
+}
+
+.meal-emoji {
+  font-size: 1.6rem;
+  flex-shrink: 0;
+}
+
+.meal-details {
+  flex: 1;
+}
+
+.meal-name {
+  font-weight: 600;
+  color: #4a148c;
+  font-size: 1rem;
+  margin-bottom: 2px;
+}
+
+.meal-category {
+  font-size: 0.8rem;
+  color: #7b1fa2;
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+.meal-ingredients {
+  font-size: 0.75rem;
+  color: #757575;
+  line-height: 1.2;
+  font-style: italic;
+}
+
+.remove-meal-btn {
+  background: none;
+  border: none;
+  color: #bdbdbd;
+  font-size: 1.4rem;
+  font-weight: bold;
+  cursor: pointer;
+  padding: 12px 8px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  line-height: 1;
+  margin-right: 4px;
+}
+
+.remove-meal-btn:hover {
+  background: #f44336;
+  color: white;
+  transform: scale(1.1);
+}
+
+.remove-meal-btn:active {
+  transform: scale(0.95);
+}
+
+/* Custom scrollbar */
+.meals-container::-webkit-scrollbar {
+  width: 6px;
+}
+
+.meals-container::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+
+.meals-container::-webkit-scrollbar-thumb {
+  background: #bdc3c7;
+  border-radius: 3px;
+}
+
+.meals-container::-webkit-scrollbar-thumb:hover {
+  background: #95a5a6;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .weekly-meals-container {
+    margin-bottom: 20px;
+  }
+  
+  .weekly-meals-container.collapsed {
+    width: auto;
+    height: 60px;
+  }
+  
+  .weekly-meals-container.collapsed .container-header {
+    padding: 20px;
+    justify-content: space-between;
+  }
+  
+  .weekly-meals-container.collapsed h2 {
+    display: block;
+  }
+  
+  .meals-container {
+    max-height: 40vh;
+  }
+}
