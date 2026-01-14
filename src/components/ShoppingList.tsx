@@ -8,6 +8,8 @@ import CommonFoodSupplies, { FoodSupply } from './CommonFoodSupplies';
 import RecipeList, { Recipe } from './RecipeList';
 import WeeklyMeals from './WeeklyMeals';
 import './ShoppingList.css';
+import allRecipesData from '../data/recipes.json';
+import commonFoodsData from '../data/common-foods.json';
 
 interface ShoppingListProps {
   listName?: string;
@@ -97,21 +99,7 @@ const ShoppingList: React.FC<ShoppingListProps> = ({ listName = 'My Shopping Lis
     if (result.source.droppableId === 'recipes' && result.destination.droppableId === 'weekly-meals') {
       const draggedRecipeId = result.draggableId.replace('recipe-', '');
       
-      // Find the recipe from our recipes data
-      const allRecipes = [
-        { id: 'pancakes', name: 'Pancakes', emoji: '🥞', ingredients: ['Milk', 'Eggs', 'Butter', 'Bread'], category: 'Breakfast' },
-        { id: 'scrambled-eggs', name: 'Scrambled Eggs', emoji: '🍳', ingredients: ['Eggs', 'Butter', 'Milk'], category: 'Breakfast' },
-        { id: 'toast', name: 'Buttered Toast', emoji: '🍞', ingredients: ['Bread', 'Butter'], category: 'Breakfast' },
-        { id: 'grilled-cheese', name: 'Grilled Cheese', emoji: '🧀', ingredients: ['Bread', 'Cheese', 'Butter'], category: 'Lunch' },
-        { id: 'chicken-salad', name: 'Chicken Salad', emoji: '🥗', ingredients: ['Chicken Breast', 'Lettuce', 'Tomatoes', 'Carrots'], category: 'Lunch' },
-        { id: 'pasta-simple', name: 'Simple Pasta', emoji: '🍝', ingredients: ['Pasta', 'Olive Oil', 'Cheese'], category: 'Lunch' },
-        { id: 'beef-stir-fry', name: 'Beef Stir Fry', emoji: '🥘', ingredients: ['Ground Beef', 'Bell Peppers', 'Onions', 'Rice'], category: 'Dinner' },
-        { id: 'chicken-rice', name: 'Chicken & Rice', emoji: '🍗', ingredients: ['Chicken Breast', 'Rice', 'Carrots', 'Onions'], category: 'Dinner' },
-        { id: 'fruit-bowl', name: 'Fruit Bowl', emoji: '🍇', ingredients: ['Apples', 'Bananas', 'Grapes', 'Oranges'], category: 'Snacks' },
-        { id: 'cheese-crackers', name: 'Cheese & Crackers', emoji: '🧀', ingredients: ['Cheese', 'Bread'], category: 'Snacks' },
-      ];
-      
-      const draggedRecipe = allRecipes.find(recipe => recipe.id === draggedRecipeId);
+      const draggedRecipe = allRecipesData.find((recipe: Recipe) => recipe.id === draggedRecipeId);
       if (draggedRecipe) {
         const newMeals = [...meals, draggedRecipe];
         handleMealsChange(newMeals);
@@ -132,31 +120,7 @@ const ShoppingList: React.FC<ShoppingListProps> = ({ listName = 'My Shopping Lis
     if (result.source.droppableId === 'common-foods' && result.destination.droppableId === 'shopping-list') {
       const draggedId = result.draggableId.replace('common-', '');
       
-      // Common foods data - should match the data in CommonFoodSupplies
-      const commonFoods = [
-        { id: 'tomatoes', name: 'Tomatoes' },
-        { id: 'potatoes', name: 'Potatoes' },
-        { id: 'onions', name: 'Onions' },
-        { id: 'carrots', name: 'Carrots' },
-        { id: 'lettuce', name: 'Lettuce' },
-        { id: 'bell-peppers', name: 'Bell Peppers' },
-        { id: 'apples', name: 'Apples' },
-        { id: 'bananas', name: 'Bananas' },
-        { id: 'oranges', name: 'Oranges' },
-        { id: 'grapes', name: 'Grapes' },
-        { id: 'milk', name: 'Milk' },
-        { id: 'eggs', name: 'Eggs' },
-        { id: 'cheese', name: 'Cheese' },
-        { id: 'butter', name: 'Butter' },
-        { id: 'chicken', name: 'Chicken Breast' },
-        { id: 'ground-beef', name: 'Ground Beef' },
-        { id: 'bread', name: 'Bread' },
-        { id: 'rice', name: 'Rice' },
-        { id: 'pasta', name: 'Pasta' },
-        { id: 'olive-oil', name: 'Olive Oil' },
-      ];
-      
-      const foodItem = commonFoods.find(food => food.id === draggedId);
+      const foodItem = commonFoodsData.find((food: FoodSupply) => food.id === draggedId);
       if (foodItem) {
         // Check if item already exists in shopping list
         const existingItem = items.find(item => item.name.toLowerCase() === foodItem.name.toLowerCase());

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Draggable, Droppable } from '@hello-pangea/dnd';
 import './RecipeList.css';
+import initialRecipes from '../data/recipes.json';
 
 export interface Recipe {
   id: string;
@@ -9,86 +10,6 @@ export interface Recipe {
   ingredients: string[];
   category: string;
 }
-
-const initialRecipes: Recipe[] = [
-  // Breakfast
-  { 
-    id: 'pancakes', 
-    name: 'Pancakes', 
-    emoji: '🥞', 
-    ingredients: ['Milk', 'Eggs', 'Butter', 'Bread'],
-    category: 'Breakfast'
-  },
-  { 
-    id: 'scrambled-eggs', 
-    name: 'Scrambled Eggs', 
-    emoji: '🍳', 
-    ingredients: ['Eggs', 'Butter', 'Milk'],
-    category: 'Breakfast'
-  },
-  { 
-    id: 'toast', 
-    name: 'Buttered Toast', 
-    emoji: '🍞', 
-    ingredients: ['Bread', 'Butter'],
-    category: 'Breakfast'
-  },
-
-  // Lunch
-  { 
-    id: 'grilled-cheese', 
-    name: 'Grilled Cheese', 
-    emoji: '🧀', 
-    ingredients: ['Bread', 'Cheese', 'Butter'],
-    category: 'Lunch'
-  },
-  { 
-    id: 'chicken-salad', 
-    name: 'Chicken Salad', 
-    emoji: '🥗', 
-    ingredients: ['Chicken Breast', 'Lettuce', 'Tomatoes', 'Carrots'],
-    category: 'Lunch'
-  },
-  { 
-    id: 'pasta-simple', 
-    name: 'Simple Pasta', 
-    emoji: '🍝', 
-    ingredients: ['Pasta', 'Olive Oil', 'Cheese'],
-    category: 'Lunch'
-  },
-
-  // Dinner
-  { 
-    id: 'beef-stir-fry', 
-    name: 'Beef Stir Fry', 
-    emoji: '🥘', 
-    ingredients: ['Ground Beef', 'Bell Peppers', 'Onions', 'Rice'],
-    category: 'Dinner'
-  },
-  { 
-    id: 'chicken-rice', 
-    name: 'Chicken & Rice', 
-    emoji: '🍗', 
-    ingredients: ['Chicken Breast', 'Rice', 'Carrots', 'Onions'],
-    category: 'Dinner'
-  },
-
-  // Snacks
-  { 
-    id: 'fruit-bowl', 
-    name: 'Fruit Bowl', 
-    emoji: '🍇', 
-    ingredients: ['Apples', 'Bananas', 'Grapes', 'Oranges'],
-    category: 'Snacks'
-  },
-  { 
-    id: 'cheese-crackers', 
-    name: 'Cheese & Crackers', 
-    emoji: '🧀', 
-    ingredients: ['Cheese', 'Bread'],
-    category: 'Snacks'
-  },
-];
 
 interface RecipeListProps {
   className?: string;

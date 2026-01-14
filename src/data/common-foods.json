@@ -1,0 +1,122 @@
+[
+  {
+    "id": "tomatoes",
+    "name": "Tomatoes",
+    "category": "Vegetables",
+    "emoji": "🍅"
+  },
+  {
+    "id": "potatoes",
+    "name": "Potatoes",
+    "category": "Vegetables",
+    "emoji": "🥔"
+  },
+  {
+    "id": "onions",
+    "name": "Onions",
+    "category": "Vegetables",
+    "emoji": "🧅"
+  },
+  {
+    "id": "carrots",
+    "name": "Carrots",
+    "category": "Vegetables",
+    "emoji": "🥕"
+  },
+  {
+    "id": "lettuce",
+    "name": "Lettuce",
+    "category": "Vegetables",
+    "emoji": "🥬"
+  },
+  {
+    "id": "bell-peppers",
+    "name": "Bell Peppers",
+    "category": "Vegetables",
+    "emoji": "🫑"
+  },
+  {
+    "id": "apples",
+    "name": "Apples",
+    "category": "Fruits",
+    "emoji": "🍎"
+  },
+  {
+    "id": "bananas",
+    "name": "Bananas",
+    "category": "Fruits",
+    "emoji": "🍌"
+  },
+  {
+    "id": "oranges",
+    "name": "Oranges",
+    "category": "Fruits",
+    "emoji": "🍊"
+  },
+  {
+    "id": "grapes",
+    "name": "Grapes",
+    "category": "Fruits",
+    "emoji": "🍇"
+  },
+  {
+    "id": "milk",
+    "name": "Milk",
+    "category": "Dairy",
+    "emoji": "🥛"
+  },
+  {
+    "id": "eggs",
+    "name": "Eggs",
+    "category": "Dairy",
+    "emoji": "🥚"
+  },
+  {
+    "id": "cheese",
+    "name": "Cheese",
+    "category": "Dairy",
+    "emoji": "🧀"
+  },
+  {
+    "id": "butter",
+    "name": "Butter",
+    "category": "Dairy",
+    "emoji": "🧈"
+  },
+  {
+    "id": "chicken",
+    "name": "Chicken Breast",
+    "category": "Meat",
+    "emoji": "🍗"
+  },
+  {
+    "id": "ground-beef",
+    "name": "Ground Beef",
+    "category": "Meat",
+    "emoji": "🥩"
+  },
+  {
+    "id": "bread",
+    "name": "Bread",
+    "category": "Bakery",
+    "emoji": "🍞"
+  },
+  {
+    "id": "rice",
+    "name": "Rice",
+    "category": "Pantry",
+    "emoji": "🍚"
+  },
+  {
+    "id": "pasta",
+    "name": "Pasta",
+    "category": "Pantry",
+    "emoji": "🍝"
+  },
+  {
+    "id": "olive-oil",
+    "name": "Olive Oil",
+    "category": "Pantry",
+    "emoji": "🫒"
+  }
+]
