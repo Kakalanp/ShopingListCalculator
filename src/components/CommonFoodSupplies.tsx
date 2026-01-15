@@ -16,6 +16,7 @@ interface CommonFoodSuppliesProps {
 
 const CommonFoodSupplies: React.FC<CommonFoodSuppliesProps> = ({ className, foods, onFoodsChange }) => {
   const [isContainerCollapsed, setIsContainerCollapsed] = useState(false);
+  const [isAddingFood, setIsAddingFood] = useState(false);
   const [newFoodName, setNewFoodName] = useState('');
   const [newFoodEmoji, setNewFoodEmoji] = useState('🥘');
 
@@ -39,6 +40,7 @@ const CommonFoodSupplies: React.FC<CommonFoodSuppliesProps> = ({ className, food
       onFoodsChange([...foods, newFood]);
       setNewFoodName('');
       setNewFoodEmoji('🥘');
+      setIsAddingFood(false);
     }
   };
 
@@ -52,28 +54,41 @@ const CommonFoodSupplies: React.FC<CommonFoodSuppliesProps> = ({ className, food
       <div className={`container-content ${isContainerCollapsed ? 'collapsed' : 'expanded'}`}>
         <p className="drag-instruction">Drag items to your shopping list</p>
         
-        <form onSubmit={addNewFood} className="add-food-form">
-          <div className="add-food-row">
+        {!isAddingFood ? (
+          <button 
+            onClick={() => setIsAddingFood(true)}
+            className="add-food-btn"
+          >
+            + Add New Food
+          </button>
+        ) : (
+          <div className="add-food-form">
             <input
               type="text"
               value={newFoodEmoji}
               onChange={(e) => setNewFoodEmoji(e.target.value)}
+              className="food-emoji-input"
               placeholder="🥘"
-              className="emoji-input"
               maxLength={2}
             />
             <input
               type="text"
               value={newFoodName}
               onChange={(e) => setNewFoodName(e.target.value)}
-              placeholder="Add new food item"
-              className="add-food-input"
+              placeholder="Food name"
+              className="food-name-input"
+              autoFocus
             />
-            <button type="submit" className="add-food-btn">
-              +
-            </button>
+            <div className="food-form-buttons">
+              <button onClick={addNewFood} className="save-btn">Save</button>
+              <button onClick={() => {
+                setIsAddingFood(false);
+                setNewFoodName('');
+                setNewFoodEmoji('🥘');
+              }} className="cancel-btn">Cancel</button>
+            </div>
           </div>
-        </form>
+        )}
       
         <Droppable droppableId="common-foods" isDropDisabled={true}>
           {(provided) => (

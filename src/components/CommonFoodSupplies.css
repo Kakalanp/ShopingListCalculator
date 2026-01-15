@@ -81,70 +81,83 @@
 }
 
 .add-food-form {
-  margin-bottom: 20px;
+  background: #f9f9f9;
+  padding: 16px;
+  border-radius: 8px;
+  margin-bottom: 16px;
+  border: 1px solid #e1e5e9;
 }
 
-.add-food-row {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-}
-
-.emoji-input {
-  width: 50px;
-  padding: 10px 8px;
-  border: 2px solid #e9ecef;
-  border-radius: 6px;
+.food-emoji-input {
+  width: 60px;
+  padding: 8px;
+  margin-bottom: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
   font-size: 1.2rem;
   text-align: center;
-  transition: all 0.2s ease;
+  margin-right: 8px;
 }
 
-.emoji-input:focus {
-  outline: none;
-  border-color: #3498db;
-  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+.food-name-input {
+  width: 100%;
+  padding: 8px 12px;
+  margin-bottom: 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 1rem;
 }
 
-.add-food-input {
-  flex: 1;
-  padding: 10px 12px;
-  border: 2px solid #e9ecef;
-  border-radius: 6px;
-  font-size: 0.9rem;
-  transition: all 0.2s ease;
-}
-
-.add-food-input:focus {
-  outline: none;
-  border-color: #3498db;
-  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+.food-form-buttons {
+  display: flex;
+  gap: 8px;
 }
 
 .add-food-btn {
-  background: #27ae60;
-  border: none;
-  border-radius: 6px;
-  padding: 10px 16px;
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 16px;
+  background: #4caf50;
   color: white;
-  font-size: 1.1rem;
-  font-weight: bold;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
   cursor: pointer;
-  transition: all 0.2s ease;
-  min-width: 44px;
-  height: 44px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  transition: background 0.2s ease;
 }
 
 .add-food-btn:hover {
-  background: #229954;
-  transform: translateY(-1px);
+  background: #45a049;
 }
 
-.add-food-btn:active {
-  transform: translateY(0);
+.save-btn {
+  flex: 1;
+  padding: 8px 16px;
+  background: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.save-btn:hover {
+  background: #45a049;
+}
+
+.cancel-btn {
+  flex: 1;
+  padding: 8px 16px;
+  background: #f44336;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.cancel-btn:hover {
+  background: #da190b;
 }
 
 .foods-container {
