@@ -12,6 +12,10 @@ interface WeeklyMealsProps {
 const WeeklyMeals: React.FC<WeeklyMealsProps> = ({ className, meals, onMealsChange }) => {
   const [isContainerCollapsed, setIsContainerCollapsed] = useState(false);
   const [showIngredients, setShowIngredients] = useState<{[key: string]: boolean}>({});
+  const [copySuccess, setCopySuccess] = useState(false);
+
+  // Limit meals to 7
+  const limitedMeals = meals.slice(0, 7);
 
   const toggleIngredients = useCallback((mealId: string, index: number) => {
     const key = `${mealId}-${index}`;
@@ -21,6 +25,20 @@ const WeeklyMeals: React.FC<WeeklyMealsProps> = ({ className, meals, onMealsChan
     }));
   }, []);
 
+  const copyMealList = useCallback(async () => {
+    const mealList = limitedMeals
+      .map((meal, index) => `${index + 1}. ${meal.name}`)
+      .join('\n');
+    
+    try {
+      await navigator.clipboard.writeText(mealList);
+      setCopySuccess(true);
+      setTimeout(() => setCopySuccess(false), 2000);
+    } catch (err) {
+      console.error('Failed to copy: ', err);
+    }
+  }, [limitedMeals]);
+
   const removeMeal = useCallback((mealIndex: number) => {
     const newMeals = meals.filter((_, index) => index !== mealIndex);
     onMealsChange(newMeals);
@@ -28,9 +46,25 @@ const WeeklyMeals: React.FC<WeeklyMealsProps> = ({ className, meals, onMealsChan
 
   return (
     <div className={`weekly-meals-container ${className || ''} ${isContainerCollapsed ? 'collapsed' : ''}`}>
-      <div className="container-header" onClick={() => setIsContainerCollapsed(!isContainerCollapsed)}>
-        <h2>Weekly Meals</h2>
-        <span className={`container-expand-icon ${isContainerCollapsed ? '' : 'expanded'}`}>◀</span>
+      <div className="container-header">
+        <h2 onClick={() => setIsContainerCollapsed(!isContainerCollapsed)}>Weekly Meals</h2>
+        <div className="header-actions">
+          {limitedMeals.length > 0 && (
+            <button 
+              className={`copy-btn ${copySuccess ? 'success' : ''}`}
+              onClick={copyMealList}
+              title={copySuccess ? 'Copied!' : 'Copy meal list to clipboard'}
+            >
+              {copySuccess ? '✓' : '📋'}
+            </button>
+          )}
+          <span 
+            className={`container-expand-icon ${isContainerCollapsed ? '' : 'expanded'}`}
+            onClick={() => setIsContainerCollapsed(!isContainerCollapsed)}
+          >
+            ◀
+          </span>
+        </div>
       </div>
       
       <div className={`container-content ${isContainerCollapsed ? 'collapsed' : 'expanded'}`}>
@@ -43,13 +77,13 @@ const WeeklyMeals: React.FC<WeeklyMealsProps> = ({ className, meals, onMealsChan
               ref={provided.innerRef}
               className={`meals-container ${snapshot.isDraggingOver ? 'dragging-over' : ''}`}
             >
-                {meals.length === 0 ? (
+                {limitedMeals.length === 0 ? (
                   <div className="empty-meals">
                     <p>No meals planned</p>
-                    <p>Drag recipes here to plan your week</p>
+                    <p>Drag recipes here to plan your week (max 7)</p>
                   </div>
                 ) : (
-                  meals.map((meal, index) => (
+                  limitedMeals.map((meal, index) => (
                     <Draggable key={`meal-${meal.id}-${index}`} draggableId={`meal-${meal.id}-${index}`} index={index}>
                     {(provided: any, snapshot: any) => (
                         <div

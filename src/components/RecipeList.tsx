@@ -8,7 +8,6 @@ export interface Recipe {
   name: string;
   emoji: string;
   ingredients: string[];
-  category: string;
 }
 
 interface RecipeListProps {
