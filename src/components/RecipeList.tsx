@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Draggable, Droppable } from '@hello-pangea/dnd';
+import { v4 as uuidv4 } from 'uuid';
 import './RecipeList.css';
-import initialRecipes from '../data/recipes.json';
 
 export interface Recipe {
   id: string;
@@ -11,15 +11,46 @@ export interface Recipe {
 }
 
 interface RecipeListProps {
+  recipes: Recipe[];
+  onRecipesChange: (recipes: Recipe[]) => void;
   className?: string;
 }
 
-const RecipeList: React.FC<RecipeListProps> = ({ className }) => {
-  const [recipes, setRecipes] = useState<Recipe[]>(initialRecipes);
+const RecipeList: React.FC<RecipeListProps> = ({ recipes, onRecipesChange, className }) => {
   const [isContainerCollapsed, setIsContainerCollapsed] = useState(false);
+  const [isAddingRecipe, setIsAddingRecipe] = useState(false);
+  const [newRecipeName, setNewRecipeName] = useState('');
+  const [newRecipeEmoji, setNewRecipeEmoji] = useState('🍽️');
+  const [newRecipeIngredients, setNewRecipeIngredients] = useState('');
 
   const deleteRecipe = (recipeId: string) => {
-    setRecipes(prev => prev.filter(recipe => recipe.id !== recipeId));
+    const updatedRecipes = recipes.filter(recipe => recipe.id !== recipeId);
+    onRecipesChange(updatedRecipes);
+  };
+
+  const addNewRecipe = () => {
+    if (newRecipeName.trim()) {
+      const ingredients = newRecipeIngredients
+        .split(',')
+        .map(ingredient => ingredient.trim())
+        .filter(ingredient => ingredient.length > 0);
+      
+      const newRecipe: Recipe = {
+        id: uuidv4(),
+        name: newRecipeName.trim(),
+        emoji: newRecipeEmoji,
+        ingredients
+      };
+      
+      const updatedRecipes = [...recipes, newRecipe];
+      onRecipesChange(updatedRecipes);
+      
+      // Reset form
+      setNewRecipeName('');
+      setNewRecipeEmoji('🍽️');
+      setNewRecipeIngredients('');
+      setIsAddingRecipe(false);
+    }
   };
 
   return (
@@ -31,6 +62,50 @@ const RecipeList: React.FC<RecipeListProps> = ({ className }) => {
       
       <div className={`container-content ${isContainerCollapsed ? 'collapsed' : 'expanded'}`}>
         <p className="recipe-instruction">Drag recipes to weekly meals →</p>
+        
+        {!isAddingRecipe ? (
+          <button 
+            onClick={() => setIsAddingRecipe(true)}
+            className="add-recipe-btn"
+          >
+            + Add New Recipe
+          </button>
+        ) : (
+          <div className="add-recipe-form">
+            <input
+              type="text"
+              value={newRecipeEmoji}
+              onChange={(e) => setNewRecipeEmoji(e.target.value)}
+              className="recipe-emoji-input"
+              placeholder="🍽️"
+              maxLength={2}
+            />
+            <input
+              type="text"
+              value={newRecipeName}
+              onChange={(e) => setNewRecipeName(e.target.value)}
+              placeholder="Recipe name"
+              className="recipe-name-input"
+              autoFocus
+            />
+            <textarea
+              value={newRecipeIngredients}
+              onChange={(e) => setNewRecipeIngredients(e.target.value)}
+              placeholder="Ingredients (comma-separated)"
+              className="recipe-ingredients-input"
+              rows={3}
+            />
+            <div className="recipe-form-buttons">
+              <button onClick={addNewRecipe} className="save-btn">Save</button>
+              <button onClick={() => {
+                setIsAddingRecipe(false);
+                setNewRecipeName('');
+                setNewRecipeEmoji('🍽️');
+                setNewRecipeIngredients('');
+              }} className="cancel-btn">Cancel</button>
+            </div>
+          </div>
+        )}
         
         <Droppable droppableId="recipes" isDropDisabled={true}>
           {(provided: any) => (

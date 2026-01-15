@@ -1,15 +1,53 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { DragDropContext, Droppable, Draggable, DropResult } from '@hello-pangea/dnd';
 import { ShoppingItem } from '../types/types';
 import ShoppingItemComponent from './ShoppingItemComponent';
-import AddItemForm from './AddItemForm';
 import CommonFoodSupplies, { FoodSupply } from './CommonFoodSupplies';
 import RecipeList, { Recipe } from './RecipeList';
 import WeeklyMeals from './WeeklyMeals';
 import './ShoppingList.css';
 import allRecipesData from '../data/recipes.json';
 import commonFoodsData from '../data/common-foods.json';
+
+// Local storage keys
+const FOODS_STORAGE_KEY = 'shopping-app-foods';
+const RECIPES_STORAGE_KEY = 'shopping-app-recipes';
+
+// Local storage utilities
+const loadFoodsFromStorage = (): FoodSupply[] => {
+  try {
+    const stored = localStorage.getItem(FOODS_STORAGE_KEY);
+    return stored ? JSON.parse(stored) : commonFoodsData;
+  } catch {
+    return commonFoodsData;
+  }
+};
+
+const saveFoodsToStorage = (foods: FoodSupply[]) => {
+  try {
+    localStorage.setItem(FOODS_STORAGE_KEY, JSON.stringify(foods));
+  } catch (error) {
+    console.warn('Failed to save foods to localStorage:', error);
+  }
+};
+
+const loadRecipesFromStorage = (): Recipe[] => {
+  try {
+    const stored = localStorage.getItem(RECIPES_STORAGE_KEY);
+    return stored ? JSON.parse(stored) : allRecipesData;
+  } catch {
+    return allRecipesData;
+  }
+};
+
+const saveRecipesToStorage = (recipes: Recipe[]) => {
+  try {
+    localStorage.setItem(RECIPES_STORAGE_KEY, JSON.stringify(recipes));
+  } catch (error) {
+    console.warn('Failed to save recipes to localStorage:', error);
+  }
+};
 
 interface ShoppingListProps {
   listName?: string;
@@ -19,15 +57,28 @@ const ShoppingList: React.FC<ShoppingListProps> = ({ listName = 'My Shopping Lis
   const [items, setItems] = useState<ShoppingItem[]>([]);
   const [meals, setMeals] = useState<Recipe[]>([]);
   const [copySuccess, setCopySuccess] = useState(false);
+  const [foods, setFoods] = useState<FoodSupply[]>(() => loadFoodsFromStorage());
+  const [recipes, setRecipes] = useState<Recipe[]>(() => loadRecipesFromStorage());
 
-  const addItem = useCallback((name: string, quantity: number) => {
-    const newItem: ShoppingItem = {
-      id: uuidv4(),
-      name,
-      quantity,
-      completed: false,
-    };
-    setItems(prev => [...prev, newItem]);
+  // Save to localStorage whenever foods or recipes change
+  useEffect(() => {
+    saveFoodsToStorage(foods);
+  }, [foods]);
+
+  useEffect(() => {
+    saveRecipesToStorage(recipes);
+  }, [recipes]);
+
+  const handleFoodsChange = useCallback((newFoods: FoodSupply[]) => {
+    setFoods(newFoods);
+    // Force re-render of drag context by triggering a state update
+    setItems(prev => [...prev]);
+  }, []);
+
+  const handleRecipesChange = useCallback((newRecipes: Recipe[]) => {
+    setRecipes(newRecipes);
+    // Force re-render of drag context by triggering a state update  
+    setMeals(prev => [...prev]);
   }, []);
 
   const updateItem = useCallback((id: string, updates: Partial<ShoppingItem>) => {
@@ -146,7 +197,7 @@ const ShoppingList: React.FC<ShoppingListProps> = ({ listName = 'My Shopping Lis
     if (result.source.droppableId === 'recipes' && result.destination.droppableId === 'weekly-meals') {
       const draggedRecipeId = result.draggableId.replace('recipe-', '');
       
-      const draggedRecipe = allRecipesData.find((recipe: Recipe) => recipe.id === draggedRecipeId);
+      const draggedRecipe = recipes.find((recipe: Recipe) => recipe.id === draggedRecipeId);
       if (draggedRecipe) {
         const newMeals = [...meals, draggedRecipe];
         handleMealsChange(newMeals);
@@ -167,7 +218,7 @@ const ShoppingList: React.FC<ShoppingListProps> = ({ listName = 'My Shopping Lis
     if (result.source.droppableId === 'common-foods' && result.destination.droppableId === 'shopping-list') {
       const draggedId = result.draggableId.replace('common-', '');
       
-      const foodItem = commonFoodsData.find((food: FoodSupply) => food.id === draggedId);
+      const foodItem = foods.find((food: FoodSupply) => food.id === draggedId);
       if (foodItem) {
         // Check if item already exists in shopping list
         const existingItem = items.find(item => item.name.toLowerCase() === foodItem.name.toLowerCase());
@@ -199,7 +250,7 @@ const ShoppingList: React.FC<ShoppingListProps> = ({ listName = 'My Shopping Lis
       newItems.splice(result.destination.index, 0, reorderedItem);
       setItems(newItems);
     }
-  }, [items, updateItem]);
+  }, [items, meals, foods, recipes, updateItem, handleMealsChange]);
 
   const completedItems = items.filter(item => item.completed).length;
 
@@ -224,8 +275,6 @@ const ShoppingList: React.FC<ShoppingListProps> = ({ listName = 'My Shopping Lis
           </div>
         </div>
 
-        <AddItemForm onAddItem={addItem} />
-
         <div className="actions">
           {items.some(item => item.completed) && (
             <button 
@@ -237,10 +286,13 @@ const ShoppingList: React.FC<ShoppingListProps> = ({ listName = 'My Shopping Lis
           )}
         </div>
 
-        <DragDropContext onDragEnd={onDragEnd}>
+        <DragDropContext 
+        onDragEnd={onDragEnd}
+        key={`${foods.length}-${recipes.length}`}
+      >
           <div className="lists-container">
             <div className="recipes-sidebar">
-              <RecipeList />
+              <RecipeList recipes={recipes} onRecipesChange={handleRecipesChange} />
             </div>
             
             <div className="meals-sidebar">
@@ -248,7 +300,7 @@ const ShoppingList: React.FC<ShoppingListProps> = ({ listName = 'My Shopping Lis
             </div>
             
             <div className="foods-sidebar">
-              <CommonFoodSupplies />
+              <CommonFoodSupplies foods={foods} onFoodsChange={handleFoodsChange} />
             </div>
             
             <div className="shopping-list-section">

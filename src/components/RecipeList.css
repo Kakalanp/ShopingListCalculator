@@ -212,3 +212,95 @@
     max-height: 40vh;
   }
 }
+
+/* Add recipe form styles */
+.add-recipe-btn {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 16px;
+  background: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.add-recipe-btn:hover {
+  background: #45a049;
+}
+
+.add-recipe-form {
+  background: #f9f9f9;
+  padding: 16px;
+  border-radius: 8px;
+  margin-bottom: 16px;
+  border: 1px solid #e1e5e9;
+}
+
+.recipe-emoji-input {
+  width: 60px;
+  padding: 8px;
+  margin-bottom: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 1.2rem;
+  text-align: center;
+  margin-right: 8px;
+}
+
+.recipe-name-input {
+  flex: 1;
+  padding: 8px 12px;
+  margin-bottom: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
+.recipe-ingredients-input {
+  width: 100%;
+  padding: 8px 12px;
+  margin-bottom: 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 1rem;
+  resize: vertical;
+  font-family: inherit;
+}
+
+.recipe-form-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.save-btn {
+  flex: 1;
+  padding: 8px 16px;
+  background: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.save-btn:hover {
+  background: #45a049;
+}
+
+.cancel-btn {
+  flex: 1;
+  padding: 8px 16px;
+  background: #f44336;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.cancel-btn:hover {
+  background: #da190b;
+}

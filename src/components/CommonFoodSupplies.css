@@ -80,6 +80,73 @@
   font-style: italic;
 }
 
+.add-food-form {
+  margin-bottom: 20px;
+}
+
+.add-food-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.emoji-input {
+  width: 50px;
+  padding: 10px 8px;
+  border: 2px solid #e9ecef;
+  border-radius: 6px;
+  font-size: 1.2rem;
+  text-align: center;
+  transition: all 0.2s ease;
+}
+
+.emoji-input:focus {
+  outline: none;
+  border-color: #3498db;
+  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+}
+
+.add-food-input {
+  flex: 1;
+  padding: 10px 12px;
+  border: 2px solid #e9ecef;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+}
+
+.add-food-input:focus {
+  outline: none;
+  border-color: #3498db;
+  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+}
+
+.add-food-btn {
+  background: #27ae60;
+  border: none;
+  border-radius: 6px;
+  padding: 10px 16px;
+  color: white;
+  font-size: 1.1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.add-food-btn:hover {
+  background: #229954;
+  transform: translateY(-1px);
+}
+
+.add-food-btn:active {
+  transform: translateY(0);
+}
+
 .foods-container {
   max-height: 60vh;
   overflow-y: auto;
