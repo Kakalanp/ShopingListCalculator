@@ -18,6 +18,7 @@ interface ShoppingListProps {
 const ShoppingList: React.FC<ShoppingListProps> = ({ listName = 'My Shopping List' }) => {
   const [items, setItems] = useState<ShoppingItem[]>([]);
   const [meals, setMeals] = useState<Recipe[]>([]);
+  const [copySuccess, setCopySuccess] = useState(false);
 
   const addItem = useCallback((name: string, quantity: number) => {
     const newItem: ShoppingItem = {
@@ -48,6 +49,20 @@ const ShoppingList: React.FC<ShoppingListProps> = ({ listName = 'My Shopping Lis
   const clearCompleted = useCallback(() => {
     setItems(prev => prev.filter(item => !item.completed));
   }, []);
+
+  const copyShoppingList = useCallback(async () => {
+    const shoppingList = items
+      .map(item => `- ${item.name}${item.quantity > 1 ? ` x ${item.quantity}` : ''}`)
+      .join('\n');
+    
+    try {
+      await navigator.clipboard.writeText(shoppingList);
+      setCopySuccess(true);
+      setTimeout(() => setCopySuccess(false), 2000);
+    } catch (err) {
+      console.error('Failed to copy: ', err);
+    }
+  }, [items]);
 
   const handleMealsChange = useCallback((newMeals: Recipe[]) => {
     // Calculate the difference in ingredients between old and new meals
@@ -193,8 +208,19 @@ const ShoppingList: React.FC<ShoppingListProps> = ({ listName = 'My Shopping Lis
       <div className="main-content">
         <div className="header">
           <h1>{listName}</h1>
-          <div className="stats">
-            <span className="item-count">{completedItems}/{items.length} completed</span>
+          <div className="header-actions">
+            <div className="stats">
+              <span className="item-count">{completedItems}/{items.length} completed</span>
+            </div>
+            {items.length > 0 && (
+              <button 
+                className={`copy-btn ${copySuccess ? 'success' : ''}`}
+                onClick={copyShoppingList}
+                title={copySuccess ? 'Copied!' : 'Copy shopping list to clipboard'}
+              >
+                {copySuccess ? '✓' : '📋'}
+              </button>
+            )}
           </div>
         </div>
 

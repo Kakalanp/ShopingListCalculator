@@ -80,70 +80,13 @@
   font-style: italic;
 }
 
-.categories-container {
-  max-height: 60vh;
-  overflow-y: auto;
-  transition: all 0.3s ease;
-}
-
-.category-section {
-  margin-bottom: 24px;
-}
-
-.category-section:last-child {
-  margin-bottom: 0;
-}
-
-.category-title {
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: #1565c0;
-  margin: 0 0 12px 0;
-  padding: 8px 12px;
-  border-bottom: 2px solid #e3f2fd;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  transition: all 0.2s ease;
-}
-
-.category-title.clickable {
-  cursor: pointer;
-  border-radius: 6px;
-}
-
-.category-title.clickable:hover {
-  background: #f0f8ff;
-  color: #0d47a1;
-}
-
-.expand-icon {
-  font-size: 0.8rem;
-  transition: transform 0.2s ease;
-  color: #1976d2;
-}
-
-.expand-icon.expanded {
-  transform: rotate(90deg);
-  color: #3498db;
-}
-
 .recipes-grid {
   display: grid;
   gap: 8px;
-  overflow: hidden;
+  max-height: 60vh;
+  overflow-y: auto;
   transition: all 0.3s ease;
-}
-
-.recipes-grid.collapsed {
-  max-height: 0;
-  margin: 0;
-  opacity: 0;
-}
-
-.recipes-grid.expanded {
-  max-height: 1000px;
-  opacity: 1;
+  grid-template-columns: 1fr;
 }
 
 .recipe-item {
@@ -227,21 +170,21 @@
 }
 
 /* Custom scrollbar */
-.categories-container::-webkit-scrollbar {
+.recipes-grid::-webkit-scrollbar {
   width: 6px;
 }
 
-.categories-container::-webkit-scrollbar-track {
+.recipes-grid::-webkit-scrollbar-track {
   background: #f1f1f1;
   border-radius: 3px;
 }
 
-.categories-container::-webkit-scrollbar-thumb {
+.recipes-grid::-webkit-scrollbar-thumb {
   background: #bdc3c7;
   border-radius: 3px;
 }
 
-.categories-container::-webkit-scrollbar-thumb:hover {
+.recipes-grid::-webkit-scrollbar-thumb:hover {
   background: #95a5a6;
 }
 
@@ -265,7 +208,7 @@
     display: block;
   }
   
-  .categories-container {
+  .recipes-grid {
     max-height: 40vh;
   }
 }
