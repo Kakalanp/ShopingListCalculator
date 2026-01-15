@@ -50,45 +50,77 @@ const ShoppingList: React.FC<ShoppingListProps> = ({ listName = 'My Shopping Lis
   }, []);
 
   const handleMealsChange = useCallback((newMeals: Recipe[]) => {
-    setMeals(newMeals);
+    // Calculate the difference in ingredients between old and new meals
+    const oldIngredients: { [key: string]: number } = {};
+    const newIngredients: { [key: string]: number } = {};
     
-    // Calculate all ingredients needed from current meals
-    const neededIngredients: { [key: string]: number } = {};
-    
-    newMeals.forEach(meal => {
+    // Count ingredients from current meals
+    meals.forEach(meal => {
       meal.ingredients.forEach(ingredient => {
-        neededIngredients[ingredient] = (neededIngredients[ingredient] || 0) + 1;
+        oldIngredients[ingredient] = (oldIngredients[ingredient] || 0) + 1;
       });
     });
-
-    // Update shopping list to match needed ingredients
+    
+    // Count ingredients from new meals
+    newMeals.forEach(meal => {
+      meal.ingredients.forEach(ingredient => {
+        newIngredients[ingredient] = (newIngredients[ingredient] || 0) + 1;
+      });
+    });
+    
+    // Update meals state
+    setMeals(newMeals);
+    
+    // Apply the changes to shopping list
     setItems(prev => {
-      // Keep manually added items (those not from meals)
-      const manualItems = prev.filter(item => !Object.keys(neededIngredients).some(ing => 
-        ing.toLowerCase() === item.name.toLowerCase()
-      ));
+      const updatedItems = [...prev];
       
-      // Add/update meal-based ingredients
-      const mealItems = Object.entries(neededIngredients).map(([ingredientName, quantity]) => {
-        const existingItem = prev.find(item => 
-          item.name.toLowerCase() === ingredientName.toLowerCase()
-        );
+      // Get all unique ingredients that changed
+      const allIngredients = new Set([
+        ...Object.keys(oldIngredients),
+        ...Object.keys(newIngredients)
+      ]);
+      
+      allIngredients.forEach(ingredient => {
+        const oldCount = oldIngredients[ingredient] || 0;
+        const newCount = newIngredients[ingredient] || 0;
+        const difference = newCount - oldCount;
         
-        if (existingItem) {
-          return { ...existingItem, quantity };
-        } else {
-          return {
-            id: uuidv4(),
-            name: ingredientName,
-            quantity,
-            completed: false,
-          };
+        if (difference !== 0) {
+          // Find existing item (case-insensitive)
+          const existingIndex = updatedItems.findIndex(item => 
+            item.name.toLowerCase() === ingredient.toLowerCase()
+          );
+          
+          if (existingIndex >= 0) {
+            // Update existing item quantity
+            const newQuantity = updatedItems[existingIndex].quantity + difference;
+            
+            if (newQuantity > 0) {
+              updatedItems[existingIndex] = {
+                ...updatedItems[existingIndex],
+                quantity: newQuantity,
+                name: ingredient // Use meal's exact naming
+              };
+            } else {
+              // Remove item if quantity becomes 0 or negative
+              updatedItems.splice(existingIndex, 1);
+            }
+          } else if (difference > 0) {
+            // Add new item if it doesn't exist and we need to add it
+            updatedItems.push({
+              id: uuidv4(),
+              name: ingredient,
+              quantity: difference,
+              completed: false,
+            });
+          }
         }
       });
       
-      return [...manualItems, ...mealItems];
+      return updatedItems;
     });
-  }, []);
+  }, [meals]);
 
   const onDragEnd = useCallback((result: DropResult) => {
     if (!result.destination) {
