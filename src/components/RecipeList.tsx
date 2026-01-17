@@ -19,6 +19,7 @@ interface RecipeListProps {
 const RecipeList: React.FC<RecipeListProps> = ({ recipes, onRecipesChange, className }) => {
   const [isContainerCollapsed, setIsContainerCollapsed] = useState(false);
   const [isAddingRecipe, setIsAddingRecipe] = useState(false);
+  const [copySuccess, setCopySuccess] = useState(false);
   const [newRecipeName, setNewRecipeName] = useState('');
   const [newRecipeEmoji, setNewRecipeEmoji] = useState('🍽️');
   const [newRecipeIngredients, setNewRecipeIngredients] = useState('');
@@ -50,6 +51,17 @@ const RecipeList: React.FC<RecipeListProps> = ({ recipes, onRecipesChange, class
       setNewRecipeEmoji('🍽️');
       setNewRecipeIngredients('');
       setIsAddingRecipe(false);
+    }
+  };
+
+  const copyRecipesJSON = async () => {
+    try {
+      const recipesJSON = JSON.stringify(recipes, null, 2);
+      await navigator.clipboard.writeText(recipesJSON);
+      setCopySuccess(true);
+      setTimeout(() => setCopySuccess(false), 2000);
+    } catch (err) {
+      console.error('Failed to copy recipes: ', err);
     }
   };
 
@@ -152,6 +164,16 @@ const RecipeList: React.FC<RecipeListProps> = ({ recipes, onRecipesChange, class
             </div>
           )}
         </Droppable>
+        
+        {recipes.length > 0 && (
+          <button 
+            className={`copy-recipes-btn ${copySuccess ? 'success' : ''}`}
+            onClick={copyRecipesJSON}
+            title={copySuccess ? 'Copied!' : 'Copy recipes JSON to clipboard'}
+          >
+            {copySuccess ? '✓ Copied' : '📋 Export Recipes'}
+          </button>
+        )}
       </div>
     </div>
   );

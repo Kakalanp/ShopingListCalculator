@@ -304,3 +304,33 @@
 .cancel-btn:hover {
   background: #da190b;
 }
+
+/* Copy recipes button */
+.copy-recipes-btn {
+  width: 100%;
+  padding: 12px;
+  margin-top: 16px;
+  background: #2196F3;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.copy-recipes-btn:hover {
+  background: #1976D2;
+}
+
+.copy-recipes-btn.success {
+  background: #4CAF50;
+}
+
+.copy-recipes-btn.success:hover {
+  background: #45a049;
+}

@@ -16,8 +16,7 @@ interface CommonFoodSuppliesProps {
 
 const CommonFoodSupplies: React.FC<CommonFoodSuppliesProps> = ({ className, foods, onFoodsChange }) => {
   const [isContainerCollapsed, setIsContainerCollapsed] = useState(false);
-  const [isAddingFood, setIsAddingFood] = useState(false);
-  const [newFoodName, setNewFoodName] = useState('');
+  const [isAddingFood, setIsAddingFood] = useState(false);  const [copySuccess, setCopySuccess] = useState(false);  const [newFoodName, setNewFoodName] = useState('');
   const [newFoodEmoji, setNewFoodEmoji] = useState('🥘');
 
   // Sort foods alphabetically by name
@@ -41,6 +40,17 @@ const CommonFoodSupplies: React.FC<CommonFoodSuppliesProps> = ({ className, food
       setNewFoodName('');
       setNewFoodEmoji('🥘');
       setIsAddingFood(false);
+    }
+  };
+
+  const copyFoodsJSON = async () => {
+    try {
+      const foodsJSON = JSON.stringify(foods, null, 2);
+      await navigator.clipboard.writeText(foodsJSON);
+      setCopySuccess(true);
+      setTimeout(() => setCopySuccess(false), 2000);
+    } catch (err) {
+      console.error('Failed to copy foods: ', err);
     }
   };
 
@@ -133,6 +143,16 @@ const CommonFoodSupplies: React.FC<CommonFoodSuppliesProps> = ({ className, food
             </div>
           )}
         </Droppable>
+        
+        {foods.length > 0 && (
+          <button 
+            className={`copy-foods-btn ${copySuccess ? 'success' : ''}`}
+            onClick={copyFoodsJSON}
+            title={copySuccess ? 'Copied!' : 'Copy foods JSON to clipboard'}
+          >
+            {copySuccess ? '✓ Copied' : '📋 Export Foods'}
+          </button>
+        )}
       </div>
     </div>
   );
