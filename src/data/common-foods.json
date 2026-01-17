@@ -1,92 +1,92 @@
 [
   {
     "id": "tomatoes",
-    "name": "Tomatoes",
+    "name": "Tomates",
     "emoji": "🍅"
   },
   {
     "id": "potatoes",
-    "name": "Potatoes",
+    "name": "Papas",
     "emoji": "🥔"
   },
   {
     "id": "onions",
-    "name": "Onions",
+    "name": "Cebollas",
     "emoji": "🧅"
   },
   {
     "id": "carrots",
-    "name": "Carrots",
+    "name": "Zanahorias",
     "emoji": "🥕"
   },
   {
     "id": "lettuce",
-    "name": "Lettuce",
+    "name": "Lechuga",
     "emoji": "🥬"
   },
   {
     "id": "bell-peppers",
-    "name": "Bell Peppers",
+    "name": "Pimientos",
     "emoji": "🫑"
   },
   {
     "id": "apples",
-    "name": "Apples",
+    "name": "Manzanas",
     "emoji": "🍎"
   },
   {
     "id": "bananas",
-    "name": "Bananas",
+    "name": "Plátanos",
     "emoji": "🍌"
   },
   {
     "id": "oranges",
-    "name": "Oranges",
+    "name": "Naranjas",
     "emoji": "🍊"
   },
   {
     "id": "grapes",
-    "name": "Grapes",
+    "name": "Uvas",
     "emoji": "🍇"
   },
   {
     "id": "milk",
-    "name": "Milk",
+    "name": "Leche",
     "emoji": "🥛"
   },
   {
     "id": "eggs",
-    "name": "Eggs",
+    "name": "Huevos",
     "emoji": "🥚"
   },
   {
     "id": "cheese",
-    "name": "Cheese",
+    "name": "Queso",
     "emoji": "🧀"
   },
   {
     "id": "butter",
-    "name": "Butter",
+    "name": "Mantequilla",
     "emoji": "🧈"
   },
   {
     "id": "chicken",
-    "name": "Chicken Breast",
+    "name": "Pechuga de Pollo",
     "emoji": "🍗"
   },
   {
     "id": "ground-beef",
-    "name": "Ground Beef",
+    "name": "Carne Molida",
     "emoji": "🥩"
   },
   {
     "id": "bread",
-    "name": "Bread",
+    "name": "Pan",
     "emoji": "🍞"
   },
   {
     "id": "rice",
-    "name": "Rice",
+    "name": "Arroz",
     "emoji": "🍚"
   },
   {
@@ -96,7 +96,7 @@
   },
   {
     "id": "olive-oil",
-    "name": "Olive Oil",
+    "name": "Aceite de Oliva",
     "emoji": "🫒"
   }
 ]

@@ -1,62 +1,62 @@
 [
   {
     "id": "pancakes",
-    "name": "Pancakes",
+    "name": "Panqueques",
     "emoji": "🥞",
-    "ingredients": ["Milk", "Eggs", "Butter", "Bread"]
+    "ingredients": ["Leche", "Huevos", "Mantequilla", "Pan"]
   },
   {
     "id": "scrambled-eggs",
-    "name": "Scrambled Eggs",
+    "name": "Huevos Revueltos",
     "emoji": "🍳",
-    "ingredients": ["Eggs", "Butter", "Milk"]
+    "ingredients": ["Huevos", "Mantequilla", "Leche"]
   },
   {
     "id": "toast",
-    "name": "Buttered Toast",
+    "name": "Tostada con Mantequilla",
     "emoji": "🍞",
-    "ingredients": ["Bread", "Butter"]
+    "ingredients": ["Pan", "Mantequilla"]
   },
   {
     "id": "grilled-cheese",
-    "name": "Grilled Cheese",
+    "name": "Sándwich de Queso",
     "emoji": "🧀",
-    "ingredients": ["Bread", "Cheese", "Butter"]
+    "ingredients": ["Pan", "Queso", "Mantequilla"]
   },
   {
     "id": "chicken-salad",
-    "name": "Chicken Salad",
+    "name": "Ensalada de Pollo",
     "emoji": "🥗",
-    "ingredients": ["Chicken Breast", "Lettuce", "Tomatoes", "Carrots"]
+    "ingredients": ["Pechuga de Pollo", "Lechuga", "Tomates", "Zanahorias"]
   },
   {
     "id": "pasta-simple",
-    "name": "Simple Pasta",
+    "name": "Pasta Sencilla",
     "emoji": "🍝",
-    "ingredients": ["Pasta", "Olive Oil", "Cheese"]
+    "ingredients": ["Pasta", "Aceite de Oliva", "Queso"]
   },
   {
     "id": "beef-stir-fry",
-    "name": "Beef Stir Fry",
+    "name": "Salteado de Carne",
     "emoji": "🥘",
-    "ingredients": ["Ground Beef", "Bell Peppers", "Onions", "Rice"]
+    "ingredients": ["Carne Molida", "Pimientos", "Cebollas", "Arroz"]
   },
   {
     "id": "chicken-rice",
-    "name": "Chicken & Rice",
+    "name": "Pollo con Arroz",
     "emoji": "🍗",
-    "ingredients": ["Chicken Breast", "Rice", "Carrots", "Onions"]
+    "ingredients": ["Pechuga de Pollo", "Arroz", "Zanahorias", "Cebollas"]
   },
   {
     "id": "fruit-bowl",
-    "name": "Fruit Bowl",
+    "name": "Ensalada de Frutas",
     "emoji": "🍇",
-    "ingredients": ["Apples", "Bananas", "Grapes", "Oranges"]
+    "ingredients": ["Manzanas", "Plátanos", "Uvas", "Naranjas"]
   },
   {
     "id": "cheese-crackers",
-    "name": "Cheese & Crackers",
+    "name": "Queso con Galletas",
     "emoji": "🧀",
-    "ingredients": ["Cheese", "Bread"]
+    "ingredients": ["Queso", "Pan"]
   }
 ]
