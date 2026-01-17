@@ -32,6 +32,11 @@
   gap: 16px;
 }
 
+.copy-buttons {
+  display: flex;
+  gap: 8px;
+}
+
 .stats {
   display: flex;
   gap: 16px;

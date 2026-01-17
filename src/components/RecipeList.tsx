@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { Draggable, Droppable } from '@hello-pangea/dnd';
 import { v4 as uuidv4 } from 'uuid';
 import './RecipeList.css';
 
@@ -13,13 +12,24 @@ export interface Recipe {
 interface RecipeListProps {
   recipes: Recipe[];
   onRecipesChange: (recipes: Recipe[]) => void;
+  selectedRecipes: string[];
+  onRecipeSelect: (recipeId: string) => void;
+  rainbowColors: string[];
   className?: string;
 }
 
-const RecipeList: React.FC<RecipeListProps> = ({ recipes, onRecipesChange, className }) => {
+const RecipeList: React.FC<RecipeListProps> = ({ 
+  recipes, 
+  onRecipesChange, 
+  selectedRecipes, 
+  onRecipeSelect, 
+  rainbowColors, 
+  className 
+}) => {
   const [isContainerCollapsed, setIsContainerCollapsed] = useState(false);
   const [isAddingRecipe, setIsAddingRecipe] = useState(false);
   const [copySuccess, setCopySuccess] = useState(false);
+  const [showIngredients, setShowIngredients] = useState<{[key: string]: boolean}>({});
   const [newRecipeName, setNewRecipeName] = useState('');
   const [newRecipeEmoji, setNewRecipeEmoji] = useState('🍽️');
   const [newRecipeIngredients, setNewRecipeIngredients] = useState('');
@@ -65,6 +75,13 @@ const RecipeList: React.FC<RecipeListProps> = ({ recipes, onRecipesChange, class
     }
   };
 
+  const toggleIngredients = (recipeId: string) => {
+    setShowIngredients(prev => ({
+      ...prev,
+      [recipeId]: !prev[recipeId]
+    }));
+  };
+
   return (
     <div className={`recipe-container ${className || ''} ${isContainerCollapsed ? 'collapsed' : ''}`}>
       <div className="container-header" onClick={() => setIsContainerCollapsed(!isContainerCollapsed)}>
@@ -73,7 +90,26 @@ const RecipeList: React.FC<RecipeListProps> = ({ recipes, onRecipesChange, class
       </div>
       
       <div className={`container-content ${isContainerCollapsed ? 'collapsed' : 'expanded'}`}>
-        <p className="recipe-instruction">Drag recipes to weekly meals →</p>
+        <div className="selected-meals-counter">
+          Selected Meals: {selectedRecipes.length}/7
+          {selectedRecipes.length > 0 && (
+            <div className="selected-meals-preview">
+              {selectedRecipes.map((recipeId, index) => {
+                const recipe = recipes.find(r => r.id === recipeId);
+                if (!recipe) return null;
+                return (
+                  <span 
+                    key={recipeId} 
+                    className="meal-preview"
+                    style={{ color: rainbowColors[index] }}
+                  >
+                    {recipe.emoji} {recipe.name}
+                  </span>
+                );
+              })}
+            </div>
+          )}
+        </div>
         
         {!isAddingRecipe ? (
           <button 
@@ -119,51 +155,66 @@ const RecipeList: React.FC<RecipeListProps> = ({ recipes, onRecipesChange, class
           </div>
         )}
         
-        <Droppable droppableId="recipes" isDropDisabled={true}>
-          {(provided: any) => (
-            <div
-              {...provided.droppableProps}
-              ref={provided.innerRef}
-              className="recipes-grid expanded"
-            >
-              {recipes.map((recipe, index) => (
-                <Draggable
-                  key={recipe.id}
-                  draggableId={`recipe-${recipe.id}`}
-                  index={index}
-                >
-                  {(provided: any, snapshot: any) => (
+        <div className="recipes-grid expanded">
+          {recipes.map((recipe, index) => {
+            const isSelected = selectedRecipes.includes(recipe.id);
+            const selectionIndex = selectedRecipes.indexOf(recipe.id);
+            const borderColor = isSelected ? rainbowColors[selectionIndex % rainbowColors.length] : 'transparent';
+            
+            return (
+              <div
+                key={recipe.id}
+                className={`recipe-item ${isSelected ? 'selected' : ''}`}
+                style={{ borderColor: borderColor }}
+                onClick={() => onRecipeSelect(recipe.id)}
+              >
+                <div className="recipe-content">
+                  <span className="recipe-emoji">{recipe.emoji}</span>
+                  <div className="recipe-details">
+                    <div className="recipe-name">{recipe.name}</div>
                     <div 
-                      ref={provided.innerRef}
-                      {...provided.draggableProps}
-                      {...provided.dragHandleProps}
-                      className={`recipe-item ${snapshot.isDragging ? 'dragging' : ''}`}
+                      className="recipe-count clickable"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        toggleIngredients(recipe.id);
+                      }}
+                      title="Click to show/hide ingredients"
                     >
-                      <div className="recipe-content">
-                        <span className="recipe-emoji">{recipe.emoji}</span>
-                        <div className="recipe-details">
-                          <div className="recipe-name">{recipe.name}</div>
-                          <div className="recipe-count">{recipe.ingredients.length} items</div>
-                        </div>
-                      </div>
-                      <button 
-                        className="delete-recipe-btn"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          deleteRecipe(recipe.id);
-                        }}
-                        title="Remove recipe"
-                      >
-                        ×
-                      </button>
+                      {recipe.ingredients.length} ingredients {showIngredients[recipe.id] ? '▲' : '▼'}
                     </div>
-                  )}
-                </Draggable>
-              ))}
-              {provided.placeholder}
-            </div>
-          )}
-        </Droppable>
+                    {showIngredients[recipe.id] && (
+                      <div className="ingredients-list">
+                        {recipe.ingredients.map((ingredient, idx) => (
+                          <div key={idx} className="ingredient-item">
+                            • {ingredient}
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+                {isSelected && (
+                  <div 
+                    className="selection-number"
+                    style={{ backgroundColor: borderColor }}
+                  >
+                    {selectionIndex + 1}
+                  </div>
+                )}
+                <button 
+                  className="delete-recipe-btn"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    deleteRecipe(recipe.id);
+                  }}
+                  title="Remove recipe"
+                >
+                  ×
+                </button>
+              </div>
+            );
+          })}
+        </div>
         
         {recipes.length > 0 && (
           <button 

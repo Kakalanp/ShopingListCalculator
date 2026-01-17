@@ -5,7 +5,6 @@ import { ShoppingItem } from '../types/types';
 import ShoppingItemComponent from './ShoppingItemComponent';
 import CommonFoodSupplies, { FoodSupply } from './CommonFoodSupplies';
 import RecipeList, { Recipe } from './RecipeList';
-import WeeklyMeals from './WeeklyMeals';
 import './ShoppingList.css';
 import allRecipesData from '../data/recipes.json';
 import commonFoodsData from '../data/common-foods.json';
@@ -57,8 +56,21 @@ const ShoppingList: React.FC<ShoppingListProps> = ({ listName = 'My Shopping Lis
   const [items, setItems] = useState<ShoppingItem[]>([]);
   const [meals, setMeals] = useState<Recipe[]>([]);
   const [copySuccess, setCopySuccess] = useState(false);
+  const [copyMealsSuccess, setCopyMealsSuccess] = useState(false);
+  const [selectedRecipes, setSelectedRecipes] = useState<string[]>([]);
   const [foods, setFoods] = useState<FoodSupply[]>(() => loadFoodsFromStorage());
   const [recipes, setRecipes] = useState<Recipe[]>(() => loadRecipesFromStorage());
+
+  // Rainbow colors for selected recipes (ROYGBIV)
+  const rainbowColors = [
+    '#FF0000', // Red
+    '#FF8C00', // Orange
+    '#FFD700', // Yellow
+    '#32CD32', // Green
+    '#1E90FF', // Blue
+    '#4B0082', // Indigo
+    '#8A2BE2'  // Violet
+  ];
 
   // Save to localStorage whenever foods or recipes change
   useEffect(() => {
@@ -114,6 +126,18 @@ const ShoppingList: React.FC<ShoppingListProps> = ({ listName = 'My Shopping Lis
       console.error('Failed to copy: ', err);
     }
   }, [items]);
+
+  const copyMealList = useCallback(async () => {
+    try {
+      const limitedMeals = meals.slice(0, 7);
+      const mealText = limitedMeals.map((meal, index) => `${index + 1}. ${meal.name}`).join('\n');
+      await navigator.clipboard.writeText(mealText);
+      setCopyMealsSuccess(true);
+      setTimeout(() => setCopyMealsSuccess(false), 2000);
+    } catch (err) {
+      console.error('Failed to copy meal list: ', err);
+    }
+  }, [meals]);
 
   const handleMealsChange = useCallback((newMeals: Recipe[]) => {
     // Calculate the difference in ingredients between old and new meals
@@ -188,20 +212,29 @@ const ShoppingList: React.FC<ShoppingListProps> = ({ listName = 'My Shopping Lis
     });
   }, [meals]);
 
-  const onDragEnd = useCallback((result: DropResult) => {
-    if (!result.destination) {
-      return;
-    }
+  const handleRecipeSelect = useCallback((recipeId: string) => {
+    const recipe = recipes.find(r => r.id === recipeId);
+    if (!recipe) return;
 
-    // Handle drag from recipes to weekly meals
-    if (result.source.droppableId === 'recipes' && result.destination.droppableId === 'weekly-meals') {
-      const draggedRecipeId = result.draggableId.replace('recipe-', '');
-      
-      const draggedRecipe = recipes.find((recipe: Recipe) => recipe.id === draggedRecipeId);
-      if (draggedRecipe) {
-        const newMeals = [...meals, draggedRecipe];
+    const isSelected = selectedRecipes.includes(recipeId);
+    
+    if (isSelected) {
+      // Remove from selection and meals
+      setSelectedRecipes(prev => prev.filter(id => id !== recipeId));
+      const newMeals = meals.filter(meal => meal.id !== recipeId);
+      handleMealsChange(newMeals);
+    } else {
+      // Add to selection and meals (max 7)
+      if (selectedRecipes.length < 7) {
+        setSelectedRecipes(prev => [...prev, recipeId]);
+        const newMeals = [...meals, recipe];
         handleMealsChange(newMeals);
       }
+    }
+  }, [recipes, selectedRecipes, meals, handleMealsChange]);
+
+  const onDragEnd = useCallback((result: DropResult) => {
+    if (!result.destination) {
       return;
     }
 
@@ -260,18 +293,29 @@ const ShoppingList: React.FC<ShoppingListProps> = ({ listName = 'My Shopping Lis
         <div className="header">
           <h1>{listName}</h1>
           <div className="header-actions">
+            <div className="copy-buttons">
+              {meals.length > 0 && (
+                <button 
+                  className={`copy-btn ${copyMealsSuccess ? 'success' : ''}`}
+                  onClick={copyMealList}
+                  title={copyMealsSuccess ? 'Copied!' : 'Copy meal list to clipboard'}
+                >
+                  {copyMealsSuccess ? '✓' : '🍽️'} Meals
+                </button>
+              )}
+              {items.length > 0 && (
+                <button 
+                  className={`copy-btn ${copySuccess ? 'success' : ''}`}
+                  onClick={copyShoppingList}
+                  title={copySuccess ? 'Copied!' : 'Copy shopping list to clipboard'}
+                >
+                  {copySuccess ? '✓' : '📋'} Shopping
+                </button>
+              )}
+            </div>
             <div className="stats">
               <span className="item-count">{completedItems}/{items.length} completed</span>
             </div>
-            {items.length > 0 && (
-              <button 
-                className={`copy-btn ${copySuccess ? 'success' : ''}`}
-                onClick={copyShoppingList}
-                title={copySuccess ? 'Copied!' : 'Copy shopping list to clipboard'}
-              >
-                {copySuccess ? '✓' : '📋'}
-              </button>
-            )}
           </div>
         </div>
 
@@ -291,16 +335,18 @@ const ShoppingList: React.FC<ShoppingListProps> = ({ listName = 'My Shopping Lis
         key={`${foods.length}-${recipes.length}`}
       >
           <div className="lists-container">
-            <div className="recipes-sidebar">
-              <RecipeList recipes={recipes} onRecipesChange={handleRecipesChange} />
-            </div>
-            
-            <div className="meals-sidebar">
-              <WeeklyMeals meals={meals} onMealsChange={handleMealsChange} />
-            </div>
-            
             <div className="foods-sidebar">
               <CommonFoodSupplies foods={foods} onFoodsChange={handleFoodsChange} />
+            </div>
+            
+            <div className="recipes-sidebar">
+              <RecipeList 
+                recipes={recipes} 
+                onRecipesChange={handleRecipesChange} 
+                selectedRecipes={selectedRecipes}
+                onRecipeSelect={handleRecipeSelect}
+                rainbowColors={rainbowColors}
+              />
             </div>
             
             <div className="shopping-list-section">

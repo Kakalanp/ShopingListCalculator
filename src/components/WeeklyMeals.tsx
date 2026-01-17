@@ -12,7 +12,6 @@ interface WeeklyMealsProps {
 const WeeklyMeals: React.FC<WeeklyMealsProps> = ({ className, meals, onMealsChange }) => {
   const [isContainerCollapsed, setIsContainerCollapsed] = useState(false);
   const [showIngredients, setShowIngredients] = useState<{[key: string]: boolean}>({});
-  const [copySuccess, setCopySuccess] = useState(false);
 
   // Limit meals to 7
   const limitedMeals = meals.slice(0, 7);
@@ -25,20 +24,6 @@ const WeeklyMeals: React.FC<WeeklyMealsProps> = ({ className, meals, onMealsChan
     }));
   }, []);
 
-  const copyMealList = useCallback(async () => {
-    const mealList = limitedMeals
-      .map((meal, index) => `${index + 1}. ${meal.name}`)
-      .join('\n');
-    
-    try {
-      await navigator.clipboard.writeText(mealList);
-      setCopySuccess(true);
-      setTimeout(() => setCopySuccess(false), 2000);
-    } catch (err) {
-      console.error('Failed to copy: ', err);
-    }
-  }, [limitedMeals]);
-
   const removeMeal = useCallback((mealIndex: number) => {
     const newMeals = meals.filter((_, index) => index !== mealIndex);
     onMealsChange(newMeals);
@@ -49,15 +34,6 @@ const WeeklyMeals: React.FC<WeeklyMealsProps> = ({ className, meals, onMealsChan
       <div className="container-header">
         <h2 onClick={() => setIsContainerCollapsed(!isContainerCollapsed)}>Weekly Meals</h2>
         <div className="header-actions">
-          {limitedMeals.length > 0 && (
-            <button 
-              className={`copy-btn ${copySuccess ? 'success' : ''}`}
-              onClick={copyMealList}
-              title={copySuccess ? 'Copied!' : 'Copy meal list to clipboard'}
-            >
-              {copySuccess ? '✓' : '📋'}
-            </button>
-          )}
           <span 
             className={`container-expand-icon ${isContainerCollapsed ? '' : 'expanded'}`}
             onClick={() => setIsContainerCollapsed(!isContainerCollapsed)}
