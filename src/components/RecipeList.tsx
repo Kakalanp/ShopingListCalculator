@@ -1,13 +1,10 @@
 import React, { useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
+import RecipeModal from './RecipeModal';
+import type { Recipe } from './RecipeModal';
 import './RecipeList.css';
 
-export interface Recipe {
-  id: string;
-  name: string;
-  emoji: string;
-  ingredients: string[];
-}
+export type { Recipe } from './RecipeModal';
 
 interface RecipeListProps {
   recipes: Recipe[];
@@ -15,7 +12,15 @@ interface RecipeListProps {
   selectedRecipes: string[];
   onRecipeSelect: (recipeId: string) => void;
   rainbowColors: string[];
+  foods: FoodSupply[];
+  onFoodsChange: (foods: FoodSupply[]) => void;
   className?: string;
+}
+
+export interface FoodSupply {
+  id: string;
+  name: string;
+  emoji: string;
 }
 
 const RecipeList: React.FC<RecipeListProps> = ({ 
@@ -23,45 +28,50 @@ const RecipeList: React.FC<RecipeListProps> = ({
   onRecipesChange, 
   selectedRecipes, 
   onRecipeSelect, 
-  rainbowColors, 
+  rainbowColors,
+  foods,
+  onFoodsChange,
   className 
 }) => {
   const [isContainerCollapsed, setIsContainerCollapsed] = useState(false);
-  const [isAddingRecipe, setIsAddingRecipe] = useState(false);
   const [copySuccess, setCopySuccess] = useState(false);
   const [showIngredients, setShowIngredients] = useState<{[key: string]: boolean}>({});
-  const [newRecipeName, setNewRecipeName] = useState('');
-  const [newRecipeEmoji, setNewRecipeEmoji] = useState('🍽️');
-  const [newRecipeIngredients, setNewRecipeIngredients] = useState('');
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingRecipe, setEditingRecipe] = useState<Recipe | null>(null);
 
   const deleteRecipe = (recipeId: string) => {
     const updatedRecipes = recipes.filter(recipe => recipe.id !== recipeId);
     onRecipesChange(updatedRecipes);
   };
 
-  const addNewRecipe = () => {
-    if (newRecipeName.trim()) {
-      const ingredients = newRecipeIngredients
-        .split(',')
-        .map(ingredient => ingredient.trim())
-        .filter(ingredient => ingredient.length > 0);
-      
-      const newRecipe: Recipe = {
-        id: uuidv4(),
-        name: newRecipeName.trim(),
-        emoji: newRecipeEmoji,
-        ingredients
-      };
-      
+  const handleSaveRecipe = (newRecipe: Recipe) => {
+    if (editingRecipe) {
+      const updatedRecipes = recipes.map(recipe => 
+        recipe.id === editingRecipe.id ? newRecipe : recipe
+      );
+      onRecipesChange(updatedRecipes);
+      setEditingRecipe(null);
+    } else {
       const updatedRecipes = [...recipes, newRecipe];
       onRecipesChange(updatedRecipes);
-      
-      // Reset form
-      setNewRecipeName('');
-      setNewRecipeEmoji('🍽️');
-      setNewRecipeIngredients('');
-      setIsAddingRecipe(false);
     }
+  };
+
+  const handleEditRecipe = (recipe: Recipe) => {
+    setEditingRecipe(recipe);
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setEditingRecipe(null);
+  };
+
+  const toggleIngredients = (recipeId: string) => {
+    setShowIngredients(prev => ({
+      ...prev,
+      [recipeId]: !prev[recipeId]
+    }));
   };
 
   const copyRecipesJSON = async () => {
@@ -73,13 +83,6 @@ const RecipeList: React.FC<RecipeListProps> = ({
     } catch (err) {
       console.error('Failed to copy recipes: ', err);
     }
-  };
-
-  const toggleIngredients = (recipeId: string) => {
-    setShowIngredients(prev => ({
-      ...prev,
-      [recipeId]: !prev[recipeId]
-    }));
   };
 
   return (
@@ -111,49 +114,12 @@ const RecipeList: React.FC<RecipeListProps> = ({
           )}
         </div>
         
-        {!isAddingRecipe ? (
-          <button 
-            onClick={() => setIsAddingRecipe(true)}
-            className="add-recipe-btn"
-          >
-            + Add New Recipe
-          </button>
-        ) : (
-          <div className="add-recipe-form">
-            <input
-              type="text"
-              value={newRecipeEmoji}
-              onChange={(e) => setNewRecipeEmoji(e.target.value)}
-              className="recipe-emoji-input"
-              placeholder="🍽️"
-              maxLength={2}
-            />
-            <input
-              type="text"
-              value={newRecipeName}
-              onChange={(e) => setNewRecipeName(e.target.value)}
-              placeholder="Recipe name"
-              className="recipe-name-input"
-              autoFocus
-            />
-            <textarea
-              value={newRecipeIngredients}
-              onChange={(e) => setNewRecipeIngredients(e.target.value)}
-              placeholder="Ingredients (comma-separated)"
-              className="recipe-ingredients-input"
-              rows={3}
-            />
-            <div className="recipe-form-buttons">
-              <button onClick={addNewRecipe} className="save-btn">Save</button>
-              <button onClick={() => {
-                setIsAddingRecipe(false);
-                setNewRecipeName('');
-                setNewRecipeEmoji('🍽️');
-                setNewRecipeIngredients('');
-              }} className="cancel-btn">Cancel</button>
-            </div>
-          </div>
-        )}
+        <button 
+          onClick={() => setIsModalOpen(true)}
+          className="add-recipe-btn"
+        >
+          + Add New Recipe
+        </button>
         
         <div className="recipes-grid expanded">
           {recipes.map((recipe, index) => {
@@ -201,16 +167,28 @@ const RecipeList: React.FC<RecipeListProps> = ({
                     {selectionIndex + 1}
                   </div>
                 )}
-                <button 
-                  className="delete-recipe-btn"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    deleteRecipe(recipe.id);
-                  }}
-                  title="Remove recipe"
-                >
-                  ×
-                </button>
+                <div className="recipe-buttons">
+                  <button 
+                    className="edit-recipe-btn"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleEditRecipe(recipe);
+                    }}
+                    title="Edit recipe"
+                  >
+                    ✏️
+                  </button>
+                  <button 
+                    className="delete-recipe-btn"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      deleteRecipe(recipe.id);
+                    }}
+                    title="Remove recipe"
+                  >
+                    ×
+                  </button>
+                </div>
               </div>
             );
           })}
@@ -226,6 +204,15 @@ const RecipeList: React.FC<RecipeListProps> = ({
           </button>
         )}
       </div>
+      
+      <RecipeModal
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        onSave={handleSaveRecipe}
+        foods={foods}
+        onFoodsChange={onFoodsChange}
+        editingRecipe={editingRecipe}
+      />
     </div>
   );
 };

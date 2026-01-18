@@ -110,9 +110,10 @@
 }
 
 .lists-container {
-  display: grid;
-  grid-template-columns: 260px 260px 260px 1fr;
+  display: flex;
   gap: 20px;
+  align-items: flex-start;
+  flex-wrap: wrap;
 }
 
 .recipes-sidebar,
@@ -121,10 +122,13 @@
   position: sticky;
   top: 20px;
   height: fit-content;
+  flex: 0 0 auto;
 }
 
 .shopping-list-section {
-  min-width: 0; /* Prevents grid overflow */
+  flex: 1;
+  min-width: 300px;
+  max-width: 500px;
 }
 
 .items-container {
@@ -171,8 +175,9 @@
   }
   
   .lists-container {
-    grid-template-columns: 1fr;
+    flex-direction: column;
     gap: 16px;
+    align-items: center;
   }
   
   .recipes-sidebar,
@@ -180,6 +185,13 @@
   .foods-sidebar {
     position: static;
     order: -1; /* Show sidebars first on mobile */
+    width: 100%;
+    max-width: 400px;
+  }
+  
+  .shopping-list-section {
+    width: 100%;
+    max-width: 400px;
   }
   
   .header {

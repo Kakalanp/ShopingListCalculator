@@ -335,10 +335,6 @@ const ShoppingList: React.FC<ShoppingListProps> = ({ listName = 'My Shopping Lis
         key={`${foods.length}-${recipes.length}`}
       >
           <div className="lists-container">
-            <div className="foods-sidebar">
-              <CommonFoodSupplies foods={foods} onFoodsChange={handleFoodsChange} />
-            </div>
-            
             <div className="recipes-sidebar">
               <RecipeList 
                 recipes={recipes} 
@@ -346,7 +342,13 @@ const ShoppingList: React.FC<ShoppingListProps> = ({ listName = 'My Shopping Lis
                 selectedRecipes={selectedRecipes}
                 onRecipeSelect={handleRecipeSelect}
                 rainbowColors={rainbowColors}
+                foods={foods}
+                onFoodsChange={handleFoodsChange}
               />
+            </div>
+            
+            <div className="foods-sidebar">
+              <CommonFoodSupplies foods={foods} onFoodsChange={handleFoodsChange} />
             </div>
             
             <div className="shopping-list-section">

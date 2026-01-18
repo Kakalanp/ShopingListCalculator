@@ -7,6 +7,7 @@
   border: 1px solid #e1e5e9;
   transition: all 0.3s ease;
   overflow: hidden;
+  width: 400px;
 }
 
 .common-foods-container.collapsed {
@@ -78,6 +79,29 @@
   font-size: 0.9rem;
   color: #7f8c8d;
   font-style: italic;
+}
+
+.common-foods-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.food-search-input {
+  width: 100%;
+  padding: 12px;
+  border: 2px solid #e1e5e9;
+  border-radius: 8px;
+  font-size: 16px;
+  outline: none;
+  transition: border-color 0.2s ease;
+  box-sizing: border-box;
+}
+
+.food-search-input:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
 }
 
 .add-food-form {
