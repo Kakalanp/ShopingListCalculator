@@ -25,16 +25,22 @@ const AddNewFood: React.FC<AddNewFoodProps> = ({
   const [newFoodName, setNewFoodName] = useState('');
   const [newFoodEmoji, setNewFoodEmoji] = useState('🥘');
 
-  const addNewFood = (e: React.FormEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
+  const addNewFood = (e?: React.FormEvent | React.MouseEvent) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+
+    }
     if (newFoodName.trim()) {
       const newFood: FoodSupply = {
         id: `custom-${Date.now()}-${newFoodName.toLowerCase().replace(/\s+/g, '-')}`,
         name: newFoodName.trim(),
         emoji: newFoodEmoji || '🥘',
       };
-      onFoodsChange([...foods, newFood]);
+      // Use setTimeout to prevent re-render issues
+      setTimeout(() => {
+        onFoodsChange([...foods, newFood]);
+      }, 0);
       setNewFoodName('');
       setNewFoodEmoji('🥘');
       setIsAdding(false);
@@ -59,32 +65,58 @@ const AddNewFood: React.FC<AddNewFoodProps> = ({
   }
 
   return (
-    <div onClick={(e) => e.stopPropagation()}>
-      <form onSubmit={addNewFood} className={`add-food-form ${compact ? 'compact' : ''}`}>
+    <div onClick={(e) => {
+      e.stopPropagation();
+      e.preventDefault();
+    }}>
+      <div className={`add-food-form ${compact ? 'compact' : ''}`}>
         <div className="add-food-inputs">
           <input
             type="text"
             value={newFoodEmoji}
-            onChange={(e) => setNewFoodEmoji(e.target.value)}
+            onChange={(e) => {
+              e.stopPropagation();
+              setNewFoodEmoji(e.target.value);
+            }}
             className="food-emoji-input"
             placeholder="🥘"
             maxLength={2}
-            onClick={(e) => e.stopPropagation()}
+            onClick={(e) => {
+              e.stopPropagation();
+              e.preventDefault();
+            }}
           />
           <input
             type="text"
             value={newFoodName}
-            onChange={(e) => setNewFoodName(e.target.value)}
+            onChange={(e) => {
+              e.stopPropagation();
+              setNewFoodName(e.target.value);
+            }}
             placeholder={placeholder}
             className="food-name-input"
             autoFocus
-            onClick={(e) => e.stopPropagation()}
+            onClick={(e) => {
+              e.stopPropagation();
+              e.preventDefault();
+            }}
+            onKeyDown={(e) => {
+              e.stopPropagation();
+              if (e.key === 'Enter') {
+                e.preventDefault();
+                addNewFood(e);
+              }
+            }}
           />
           <button 
-            type="submit" 
+            type="button" 
             className="save-food-btn" 
             disabled={!newFoodName.trim()}
-            onClick={(e) => e.stopPropagation()}
+            onClick={(e) => {
+              e.stopPropagation();
+              e.preventDefault();
+              addNewFood(e);
+            }}
           >
             ✓
           </button>
@@ -93,13 +125,14 @@ const AddNewFood: React.FC<AddNewFoodProps> = ({
             className="cancel-food-btn" 
             onClick={(e) => {
               e.stopPropagation();
+              e.preventDefault();
               handleCancel();
             }}
           >
             ×
           </button>
         </div>
-      </form>
+      </div>
     </div>
   );
 };

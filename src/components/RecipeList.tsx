@@ -14,7 +14,11 @@ interface RecipeListProps {
   rainbowColors: string[];
   foods: FoodSupply[];
   onFoodsChange: (foods: FoodSupply[]) => void;
+  onModalClose?: () => void;
   className?: string;
+  meals: Recipe[];
+  copyMealList: () => void;
+  copyMealsSuccess: boolean;
 }
 
 export interface FoodSupply {
@@ -31,7 +35,11 @@ const RecipeList: React.FC<RecipeListProps> = ({
   rainbowColors,
   foods,
   onFoodsChange,
-  className 
+  onModalClose,
+  className,
+  meals,
+  copyMealList,
+  copyMealsSuccess
 }) => {
   const [isContainerCollapsed, setIsContainerCollapsed] = useState(false);
   const [copySuccess, setCopySuccess] = useState(false);
@@ -65,6 +73,10 @@ const RecipeList: React.FC<RecipeListProps> = ({
   const handleCloseModal = () => {
     setIsModalOpen(false);
     setEditingRecipe(null);
+    // Force refresh common foods when modal closes
+    if (onModalClose) {
+      onModalClose();
+    }
   };
 
   const toggleIngredients = (recipeId: string) => {
@@ -94,7 +106,16 @@ const RecipeList: React.FC<RecipeListProps> = ({
       
       <div className={`container-content ${isContainerCollapsed ? 'collapsed' : 'expanded'}`}>
         <div className="selected-meals-counter">
-          Selected Meals: {selectedRecipes.length}/7
+          <span>Selected Meals: {selectedRecipes.length}/7</span>
+          {meals.length > 0 && (
+            <button 
+              className={`copy-btn ${copyMealsSuccess ? 'success' : ''}`}
+              onClick={copyMealList}
+              title={copyMealsSuccess ? 'Copied!' : 'Copy meal list to clipboard'}
+            >
+              {copyMealsSuccess ? '✓' : '🍽️'} Meals
+            </button>
+          )}
           {selectedRecipes.length > 0 && (
             <div className="selected-meals-preview">
               {selectedRecipes.map((recipeId, index) => {

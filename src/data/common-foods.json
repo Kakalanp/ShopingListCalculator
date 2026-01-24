@@ -98,5 +98,75 @@
     "id": "olive-oil",
     "name": "Aceite de Oliva",
     "emoji": "🫒"
+  },
+  {
+    "id": "toilet-paper",
+    "name": "Papel higiénico",
+    "emoji": "🧻"
+  },
+  {
+    "id": "paper-towels",
+    "name": "Toallas de papel",
+    "emoji": "🧻"
+  },
+  {
+    "id": "aluminum-foil",
+    "name": "Papel aluminio",
+    "emoji": "📜"
+  },
+  {
+    "id": "plastic-wrap",
+    "name": "Papel film",
+    "emoji": "📱"
+  },
+  {
+    "id": "dish-soap",
+    "name": "Jabón para platos",
+    "emoji": "🧽"
+  },
+  {
+    "id": "laundry-detergent",
+    "name": "Detergente",
+    "emoji": "🧴"
+  },
+  {
+    "id": "shampoo",
+    "name": "Champú",
+    "emoji": "🧴"
+  },
+  {
+    "id": "toothpaste",
+    "name": "Pasta de dientes",
+    "emoji": "🦷"
+  },
+  {
+    "id": "tissues",
+    "name": "Pañuelos",
+    "emoji": "🤧"
+  },
+  {
+    "id": "trash-bags",
+    "name": "Bolsas de basura",
+    "emoji": "🗑️"
+  },
+  {
+    "id": "batteries",
+    "name": "Pilas",
+    "emoji": "🔋"
+  },
+  {
+    "id": "light-bulbs",
+    "name": "Bombillas",
+    "emoji": "💡"
+  },
+  {
+    "id": "cleaning-spray",
+    "name": "Spray limpiador",
+    "emoji": "�"
+  },
+  {
+    "id": "sponges",
+    "name": "Esponjas",
+    "emoji": "🧽"
   }
 ]

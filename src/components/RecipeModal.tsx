@@ -117,6 +117,12 @@ const RecipeModal: React.FC<RecipeModalProps> = ({
   };
 
   const handleBackdropClick = (e: React.MouseEvent) => {
+    // Don't close modal if there are any add-food forms open
+    const addFoodForms = document.querySelectorAll('.add-food-form');
+    if (addFoodForms.length > 0) {
+      return;
+    }
+    
     if (e.target === e.currentTarget) {
       handleClose();
     }

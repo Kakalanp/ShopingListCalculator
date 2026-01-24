@@ -72,25 +72,23 @@ const ShoppingList: React.FC<ShoppingListProps> = ({ listName = 'My Shopping Lis
     '#8A2BE2'  // Violet
   ];
 
-  // Save to localStorage whenever foods or recipes change
-  useEffect(() => {
-    saveFoodsToStorage(foods);
-  }, [foods]);
-
-  useEffect(() => {
-    saveRecipesToStorage(recipes);
-  }, [recipes]);
+  // localStorage is now saved manually in change handlers to prevent scroll resets
 
   const handleFoodsChange = useCallback((newFoods: FoodSupply[]) => {
     setFoods(newFoods);
-    // Force re-render of drag context by triggering a state update
-    setItems(prev => [...prev]);
+    saveFoodsToStorage(newFoods);
   }, []);
 
   const handleRecipesChange = useCallback((newRecipes: Recipe[]) => {
     setRecipes(newRecipes);
-    // Force re-render of drag context by triggering a state update  
-    setMeals(prev => [...prev]);
+    saveRecipesToStorage(newRecipes);
+  }, []);
+
+  const handleModalClose = useCallback(() => {
+    // Force refresh foods from localStorage when modal closes
+    // This ensures new foods added in modal are visible in CommonFoodSupplies
+    const refreshedFoods = loadFoodsFromStorage();
+    setFoods(refreshedFoods);
   }, []);
 
   const updateItem = useCallback((id: string, updates: Partial<ShoppingItem>) => {
@@ -112,6 +110,11 @@ const ShoppingList: React.FC<ShoppingListProps> = ({ listName = 'My Shopping Lis
   const clearCompleted = useCallback(() => {
     setItems(prev => prev.filter(item => !item.completed));
   }, []);
+
+  const toggleAllComplete = useCallback(() => {
+    const allCompleted = items.length > 0 && items.every(item => item.completed);
+    setItems(prev => prev.map(item => ({ ...item, completed: !allCompleted })));
+  }, [items]);
 
   const copyShoppingList = useCallback(async () => {
     const shoppingList = items
@@ -292,48 +295,9 @@ const ShoppingList: React.FC<ShoppingListProps> = ({ listName = 'My Shopping Lis
       <div className="main-content">
         <div className="header">
           <h1>{listName}</h1>
-          <div className="header-actions">
-            <div className="copy-buttons">
-              {meals.length > 0 && (
-                <button 
-                  className={`copy-btn ${copyMealsSuccess ? 'success' : ''}`}
-                  onClick={copyMealList}
-                  title={copyMealsSuccess ? 'Copied!' : 'Copy meal list to clipboard'}
-                >
-                  {copyMealsSuccess ? '✓' : '🍽️'} Meals
-                </button>
-              )}
-              {items.length > 0 && (
-                <button 
-                  className={`copy-btn ${copySuccess ? 'success' : ''}`}
-                  onClick={copyShoppingList}
-                  title={copySuccess ? 'Copied!' : 'Copy shopping list to clipboard'}
-                >
-                  {copySuccess ? '✓' : '📋'} Shopping
-                </button>
-              )}
-            </div>
-            <div className="stats">
-              <span className="item-count">{completedItems}/{items.length} completed</span>
-            </div>
-          </div>
         </div>
 
-        <div className="actions">
-          {items.some(item => item.completed) && (
-            <button 
-              className="clear-completed-btn"
-              onClick={clearCompleted}
-            >
-              Clear Completed
-            </button>
-          )}
-        </div>
-
-        <DragDropContext 
-        onDragEnd={onDragEnd}
-        key={`${foods.length}-${recipes.length}`}
-      >
+        <DragDropContext onDragEnd={onDragEnd}>
           <div className="lists-container">
             <div className="recipes-sidebar">
               <RecipeList 
@@ -344,6 +308,10 @@ const ShoppingList: React.FC<ShoppingListProps> = ({ listName = 'My Shopping Lis
                 rainbowColors={rainbowColors}
                 foods={foods}
                 onFoodsChange={handleFoodsChange}
+                onModalClose={handleModalClose}
+                meals={meals}
+                copyMealList={copyMealList}
+                copyMealsSuccess={copyMealsSuccess}
               />
             </div>
             
@@ -352,6 +320,43 @@ const ShoppingList: React.FC<ShoppingListProps> = ({ listName = 'My Shopping Lis
             </div>
             
             <div className="shopping-list-section">
+              <div className="shopping-list-header">
+                <div className="header-actions">
+                  <div className="select-all-section">
+                    <label className="select-all-label">
+                      <input
+                        type="checkbox"
+                        checked={items.length > 0 && items.every(item => item.completed)}
+                        onChange={toggleAllComplete}
+                        disabled={items.length === 0}
+                        className="select-all-checkbox"
+                      />
+                      <span className="item-count">{completedItems}/{items.length}</span>
+                    </label>
+                  </div>
+                  <div className="copy-buttons">
+                    {items.some(item => item.completed) && (
+                      <button 
+                        className="clear-completed-btn"
+                        onClick={clearCompleted}
+                        title="Clear completed items"
+                      >
+                        🗑️
+                      </button>
+                    )}
+                    {items.length > 0 && (
+                      <button 
+                        className={`copy-btn ${copySuccess ? 'success' : ''}`}
+                        onClick={copyShoppingList}
+                        title={copySuccess ? 'Copied!' : 'Copy shopping list to clipboard'}
+                      >
+                        {copySuccess ? '✓' : '📋'} Shopping
+                      </button>
+                    )}
+                  </div>
+                </div>
+              </div>
+              
               <Droppable droppableId="shopping-list">
                 {(provided, snapshot) => (
                   <div
