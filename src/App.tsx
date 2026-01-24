@@ -5,7 +5,7 @@ import './App.css';
 function App() {
   return (
     <div className="App">
-      <ShoppingList listName="My Draggable Shopping List" />
+      <ShoppingList/>
     </div>
   );
 }

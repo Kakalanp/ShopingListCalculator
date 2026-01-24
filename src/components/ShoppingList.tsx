@@ -49,11 +49,7 @@ const saveRecipesToStorage = (recipes: Recipe[]) => {
   }
 };
 
-interface ShoppingListProps {
-  listName?: string;
-}
-
-const ShoppingList: React.FC<ShoppingListProps> = ({ listName = 'Mi Lista de Compras' }) => {
+const ShoppingList: React.FC = () => {
   const [items, setItems] = useState<ShoppingItem[]>([]);
   const [meals, setMeals] = useState<Recipe[]>([]);
   const [copySuccess, setCopySuccess] = useState(false);
@@ -313,10 +309,6 @@ const ShoppingList: React.FC<ShoppingListProps> = ({ listName = 'Mi Lista de Com
   return (
     <div className="shopping-list-container">
       <div className="main-content">
-        <div className="header">
-          <h1>{listName}</h1>
-        </div>
-
         <DragDropContext onDragEnd={onDragEnd}>
           <div className="lists-container">
             <div className="recipes-sidebar">
