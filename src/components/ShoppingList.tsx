@@ -5,6 +5,7 @@ import { ShoppingItem } from '../types/types';
 import ShoppingItemComponent from './ShoppingItemComponent';
 import CommonFoodSupplies, { FoodSupply } from './CommonFoodSupplies';
 import RecipeList, { Recipe } from './RecipeList';
+import NotificationSystem from './NotificationSystem';
 import './ShoppingList.css';
 import allRecipesData from '../data/recipes.json';
 import commonFoodsData from '../data/common-foods.json';
@@ -398,6 +399,9 @@ const ShoppingList: React.FC<ShoppingListProps> = ({ listName = 'My Shopping Lis
           </div>
         </DragDropContext>
       </div>
+      
+      {/* Notification System */}
+      <NotificationSystem />
     </div>
   );
 };
