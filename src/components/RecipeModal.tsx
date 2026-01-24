@@ -134,7 +134,7 @@ const RecipeModal: React.FC<RecipeModalProps> = ({
     <div className="recipe-modal-backdrop" onClick={handleBackdropClick}>
       <div className="recipe-modal">
         <div className="recipe-modal-header">
-          <h2>{editingRecipe ? 'Edit Recipe' : 'Create New Recipe'}</h2>
+          <h2>{editingRecipe ? 'Editar Receta' : 'Crear Nueva Receta'}</h2>
           <button className="close-modal-btn" onClick={handleClose}>
             ×
           </button>
@@ -152,7 +152,7 @@ const RecipeModal: React.FC<RecipeModalProps> = ({
                 ) : (
                   <div className="recipe-image-placeholder">
                     <span className="upload-icon">📸</span>
-                    <span className="upload-text">Add Photo</span>
+                    <span className="upload-text">Añadir Foto</span>
                   </div>
                 )}
               </div>
@@ -179,7 +179,7 @@ const RecipeModal: React.FC<RecipeModalProps> = ({
                   type="text"
                   value={recipeName}
                   onChange={(e) => setRecipeName(e.target.value)}
-                  placeholder="Recipe name"
+                  placeholder="Nombre de la receta"
                   className="recipe-name-input-modal"
                   autoFocus
                 />
@@ -237,7 +237,7 @@ const RecipeModal: React.FC<RecipeModalProps> = ({
               <AddNewFood 
                 foods={foods}
                 onFoodsChange={onFoodsChange}
-                placeholder="Add ingredient"
+                placeholder="Añadir ingrediente"
                 compact={true}
               />
             </div>
@@ -246,14 +246,14 @@ const RecipeModal: React.FC<RecipeModalProps> = ({
         
         <div className="recipe-modal-footer">
           <button className="cancel-recipe-btn" onClick={handleClose}>
-            Cancel
+            Cancelar
           </button>
           <button 
             className="save-recipe-btn" 
             onClick={handleSave}
             disabled={!recipeName.trim() || selectedIngredients.length === 0}
           >
-            {editingRecipe ? 'Update Recipe' : 'Create Recipe'}
+            {editingRecipe ? 'Actualizar Receta' : 'Crear Receta'}
           </button>
         </div>
       </div>

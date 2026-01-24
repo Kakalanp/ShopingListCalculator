@@ -32,7 +32,7 @@ const AddItemForm: React.FC<AddItemFormProps> = ({ onAddItem }) => {
           type="text"
           value={formData.name}
           onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
-          placeholder="Item name"
+          placeholder="Nombre del artículo"
           className="item-name-input"
           required
         />
@@ -45,7 +45,7 @@ const AddItemForm: React.FC<AddItemFormProps> = ({ onAddItem }) => {
           required
         />
         <button type="submit" className="add-btn">
-          Add Item
+          Añadir Artículo
         </button>
       </div>
     </form>

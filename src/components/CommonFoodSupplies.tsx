@@ -46,7 +46,7 @@ const CommonFoodSupplies: React.FC<CommonFoodSuppliesProps> = ({ className, food
   return (
     <div className={`common-foods-container ${className || ''} ${isContainerCollapsed ? 'collapsed' : ''}`}>
       <div className="container-header" onClick={() => setIsContainerCollapsed(!isContainerCollapsed)}>
-        <h2>Common Items</h2>
+        <h2>Artículos Comunes</h2>
         <span className={`container-expand-icon ${isContainerCollapsed ? '' : 'expanded'}`}>◀</span>
       </div>
       
@@ -58,14 +58,14 @@ const CommonFoodSupplies: React.FC<CommonFoodSuppliesProps> = ({ className, food
             type="text"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            placeholder="Search foods..."
+            placeholder="Buscar artículos..."
             className="food-search-input"
           />
           
           <AddNewFood 
             foods={foods}
             onFoodsChange={onFoodsChange}
-            placeholder="Add new food"
+            placeholder="Añadir nuevo artículo"
             compact={false}
           />
         </div>
@@ -100,7 +100,7 @@ const CommonFoodSupplies: React.FC<CommonFoodSuppliesProps> = ({ className, food
                         <button 
                           className="delete-food-btn"
                           onClick={() => deleteFood(food.id)}
-                          title="Remove from list"
+                          title="Quitar de la lista"
                         >
                           ×
                         </button>
@@ -118,9 +118,9 @@ const CommonFoodSupplies: React.FC<CommonFoodSuppliesProps> = ({ className, food
           <button 
             className={`copy-foods-btn ${copySuccess ? 'success' : ''}`}
             onClick={copyFoodsJSON}
-            title={copySuccess ? 'Copied!' : 'Copy foods JSON to clipboard'}
+            title={copySuccess ? '¡Copiado!' : 'Copiar JSON de alimentos al portapapeles'}
           >
-            {copySuccess ? '✓ Copied' : '📋 Export Foods'}
+            {copySuccess ? '✓ Copiado' : '📋 Exportar Alimentos'}
           </button>
         )}
       </div>

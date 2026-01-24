@@ -18,7 +18,7 @@ interface AddNewFoodProps {
 const AddNewFood: React.FC<AddNewFoodProps> = ({ 
   foods, 
   onFoodsChange, 
-  placeholder = "Add new food item",
+  placeholder = "Añadir nuevo Artículo",
   compact = false 
 }) => {
   const [isAdding, setIsAdding] = useState(false);

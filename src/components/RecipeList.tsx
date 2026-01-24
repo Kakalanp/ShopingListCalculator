@@ -100,20 +100,20 @@ const RecipeList: React.FC<RecipeListProps> = ({
   return (
     <div className={`recipe-container ${className || ''} ${isContainerCollapsed ? 'collapsed' : ''}`}>
       <div className="container-header" onClick={() => setIsContainerCollapsed(!isContainerCollapsed)}>
-        <h2>Recipes</h2>
+        <h2>Recetas</h2>
         <span className={`container-expand-icon ${isContainerCollapsed ? '' : 'expanded'}`}>◀</span>
       </div>
       
       <div className={`container-content ${isContainerCollapsed ? 'collapsed' : 'expanded'}`}>
         <div className="selected-meals-counter">
-          <span>Selected Meals: {selectedRecipes.length}/7</span>
+          <span>Comidas Seleccionadas: {selectedRecipes.length}/7</span>
           {meals.length > 0 && (
             <button 
               className={`copy-btn ${copyMealsSuccess ? 'success' : ''}`}
               onClick={copyMealList}
-              title={copyMealsSuccess ? 'Copied!' : 'Copy meal list to clipboard'}
+              title={copyMealsSuccess ? '¡Copiado!' : 'Copiar lista de comidas'}
             >
-              {copyMealsSuccess ? '✓' : '🍽️'} Meals
+              {copyMealsSuccess ? '✓' : '🍽️'} Comidas
             </button>
           )}
           {selectedRecipes.length > 0 && (
@@ -139,7 +139,7 @@ const RecipeList: React.FC<RecipeListProps> = ({
           onClick={() => setIsModalOpen(true)}
           className="add-recipe-btn"
         >
-          + Add New Recipe
+          + Añadir Nueva Receta
         </button>
         
         <div className="recipes-grid expanded">
@@ -165,9 +165,9 @@ const RecipeList: React.FC<RecipeListProps> = ({
                         e.stopPropagation();
                         toggleIngredients(recipe.id);
                       }}
-                      title="Click to show/hide ingredients"
+                      title="Click para mostrar/ocultar ingredientes"
                     >
-                      {recipe.ingredients.length} ingredients {showIngredients[recipe.id] ? '▲' : '▼'}
+                      {recipe.ingredients.length} ingredientes {showIngredients[recipe.id] ? '▲' : '▼'}
                     </div>
                     {showIngredients[recipe.id] && (
                       <div className="ingredients-list">
@@ -195,7 +195,7 @@ const RecipeList: React.FC<RecipeListProps> = ({
                       e.stopPropagation();
                       handleEditRecipe(recipe);
                     }}
-                    title="Edit recipe"
+                    title="Editar receta"
                   >
                     ✏️
                   </button>
@@ -205,7 +205,7 @@ const RecipeList: React.FC<RecipeListProps> = ({
                       e.stopPropagation();
                       deleteRecipe(recipe.id);
                     }}
-                    title="Remove recipe"
+                    title="Quitar receta"
                   >
                     ×
                   </button>
@@ -219,9 +219,9 @@ const RecipeList: React.FC<RecipeListProps> = ({
           <button 
             className={`copy-recipes-btn ${copySuccess ? 'success' : ''}`}
             onClick={copyRecipesJSON}
-            title={copySuccess ? 'Copied!' : 'Copy recipes JSON to clipboard'}
+            title={copySuccess ? '¡Copiado!' : 'Copiar JSON de recetas al portapapeles'}
           >
-            {copySuccess ? '✓ Copied' : '📋 Export Recipes'}
+            {copySuccess ? '✓ Copiado' : '📋 Exportar Recetas'}
           </button>
         )}
       </div>

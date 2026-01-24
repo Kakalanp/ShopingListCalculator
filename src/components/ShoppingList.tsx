@@ -53,7 +53,7 @@ interface ShoppingListProps {
   listName?: string;
 }
 
-const ShoppingList: React.FC<ShoppingListProps> = ({ listName = 'My Shopping List' }) => {
+const ShoppingList: React.FC<ShoppingListProps> = ({ listName = 'Mi Lista de Compras' }) => {
   const [items, setItems] = useState<ShoppingItem[]>([]);
   const [meals, setMeals] = useState<Recipe[]>([]);
   const [copySuccess, setCopySuccess] = useState(false);
@@ -359,7 +359,7 @@ const ShoppingList: React.FC<ShoppingListProps> = ({ listName = 'My Shopping Lis
                       <button 
                         className="clear-completed-btn"
                         onClick={clearCompleted}
-                        title="Clear completed items"
+                        title="Eliminar artículos completados"
                       >
                         🗑️
                       </button>
@@ -368,9 +368,9 @@ const ShoppingList: React.FC<ShoppingListProps> = ({ listName = 'My Shopping Lis
                       <button 
                         className={`copy-btn ${copySuccess ? 'success' : ''}`}
                         onClick={copyShoppingList}
-                        title={copySuccess ? 'Copied!' : 'Copy shopping list to clipboard'}
+                        title={copySuccess ? '¡Copiado!' : 'Copiar lista de compras al portapapeles'}
                       >
-                        {copySuccess ? '✓' : '📋'} Shopping
+                        {copySuccess ? '✓' : '📋'} Compras
                       </button>
                     )}
                   </div>
@@ -386,8 +386,8 @@ const ShoppingList: React.FC<ShoppingListProps> = ({ listName = 'My Shopping Lis
                   >
                     {items.length === 0 ? (
                       <div className="empty-state">
-                        <p>Your shopping list is empty</p>
-                        <p>Add items above or drag from the common foods →</p>
+                        <p>Tu lista de compras está vacía</p>
+                        <p>Añade artículos arriba o arrástralos desde los alimentos comunes →</p>
                       </div>
                     ) : (
                       items.map((item, index) => (
