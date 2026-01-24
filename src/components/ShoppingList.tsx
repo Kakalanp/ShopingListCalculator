@@ -98,6 +98,25 @@ const ShoppingList: React.FC<ShoppingListProps> = ({ listName = 'My Shopping Lis
     ));
   }, []);
 
+  const addItemFromNotification = useCallback((itemName: string) => {
+    // Check if item already exists in shopping list
+    const existingItem = items.find(item => item.name.toLowerCase() === itemName.toLowerCase());
+    
+    if (existingItem) {
+      // If exists, increase quantity
+      updateItem(existingItem.id, { quantity: existingItem.quantity + 1 });
+    } else {
+      // If doesn't exist, add new item
+      const newItem: ShoppingItem = {
+        id: uuidv4(),
+        name: itemName,
+        quantity: 1,
+        completed: false,
+      };
+      setItems(prev => [...prev, newItem]);
+    }
+  }, [items, updateItem]);
+
   const deleteItem = useCallback((id: string) => {
     setItems(prev => prev.filter(item => item.id !== id));
   }, []);
@@ -401,7 +420,10 @@ const ShoppingList: React.FC<ShoppingListProps> = ({ listName = 'My Shopping Lis
       </div>
       
       {/* Notification System */}
-      <NotificationSystem />
+      <NotificationSystem 
+        foods={foods} 
+        onAddToShoppingList={addItemFromNotification}
+      />
     </div>
   );
 };

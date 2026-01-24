@@ -1,12 +1,26 @@
 [
-  "¿Llevaste las llaves?",
-  "¿Apagaste la estufa?",
-  "¿Cerraste con llave la puerta?",
-  "¿Tienes el teléfono cargado?",
-  "¿Revisaste el clima antes de salir?",
-  "¿Llevaste la cartera/billetera?",
-  "¿Tienes suficiente gasolina en el carro?",
-  "¿Programaste la alarma para mañana?",
-  "¿Guardaste el trabajo que estabas haciendo?",
-  "¿Apagaste las luces innecesarias?"
+  {
+    "message": "¿Queda aceite de cocina?",
+    "relatedItems": ["Aceite de oliva", "Aceite de cocina", "Aceite de girasol"]
+  },
+  {
+    "message": "¿Alcanza el papel higiénico?",
+    "relatedItems": ["Papel higiénico", "Toallitas húmedas", "Papel de cocina"]
+  },
+  {
+    "message": "¿Hay suficiente detergente para lavar?",
+    "relatedItems": ["Detergente líquido", "Suavizante", "Blanqueador"]
+  },
+  {
+    "message": "¿Queda pasta de dientes?",
+    "relatedItems": ["Pasta de dientes", "Cepillo de dientes", "Enjuague bucal"]
+  },
+  {
+    "message": "¿Alcanza el champú y jabón?",
+    "relatedItems": ["Champú", "Acondicionador", "Jabón", "Gel de baño"]
+  },
+  {
+    "message": "¿Hay comida para las mascotas?",
+    "relatedItems": ["Comida para perros", "Comida para gatos", "Snacks para mascotas"]
+  }
 ]

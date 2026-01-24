@@ -2,30 +2,47 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import './NotificationSystem.css';
 import defaultNotifications from '../data/notifications.json';
+import { FoodSupply } from './CommonFoodSupplies';
+
+interface NotificationData {
+  message: string;
+  relatedItems: string[];
+}
 
 interface Notification {
   id: string;
   message: string;
+  relatedItems: string[];
 }
 
 interface NotificationSystemProps {
   className?: string;
+  foods?: FoodSupply[];
+  onAddToShoppingList?: (itemName: string) => void;
 }
 
 // Local storage key
 const NOTIFICATIONS_STORAGE_KEY = 'shopping-app-notifications';
 
 // Local storage utilities
-const loadNotificationsFromStorage = (): string[] => {
+const loadNotificationsFromStorage = (): NotificationData[] => {
   try {
     const stored = localStorage.getItem(NOTIFICATIONS_STORAGE_KEY);
-    return stored ? JSON.parse(stored) : defaultNotifications;
+    if (stored) {
+      const parsed = JSON.parse(stored);
+      // Handle legacy format (array of strings)
+      if (Array.isArray(parsed) && typeof parsed[0] === 'string') {
+        return parsed.map(msg => ({ message: msg, relatedItems: [] }));
+      }
+      return parsed;
+    }
+    return defaultNotifications;
   } catch {
     return defaultNotifications;
   }
 };
 
-const saveNotificationsToStorage = (notifications: string[]) => {
+const saveNotificationsToStorage = (notifications: NotificationData[]) => {
   try {
     localStorage.setItem(NOTIFICATIONS_STORAGE_KEY, JSON.stringify(notifications));
   } catch (error) {
@@ -33,14 +50,21 @@ const saveNotificationsToStorage = (notifications: string[]) => {
   }
 };
 
-const NotificationSystem: React.FC<NotificationSystemProps> = ({ className }) => {
-  const [notifications, setNotifications] = useState<string[]>(() => loadNotificationsFromStorage());
+const NotificationSystem: React.FC<NotificationSystemProps> = ({ 
+  className, 
+  foods = [], 
+  onAddToShoppingList 
+}) => {
+  const [notifications, setNotifications] = useState<NotificationData[]>(() => loadNotificationsFromStorage());
   const [currentNotification, setCurrentNotification] = useState<Notification | null>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isVisible, setIsVisible] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
   const [showManager, setShowManager] = useState(false);
   const [newNotification, setNewNotification] = useState('');
+  const [showItemSelector, setShowItemSelector] = useState(false);
+  const [itemSearchTerm, setItemSearchTerm] = useState('');
+  const [editingIndex, setEditingIndex] = useState<number | null>(null);
 
   // Refs to store timeout IDs
   const hideTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -67,10 +91,11 @@ const NotificationSystem: React.FC<NotificationSystemProps> = ({ className }) =>
     // Clear any existing timeouts first
     clearAllTimeouts();
 
-    const message = notifications[currentIndex];
+    const notificationData = notifications[currentIndex];
     const notification: Notification = {
       id: uuidv4(),
-      message
+      message: notificationData.message,
+      relatedItems: notificationData.relatedItems || []
     };
 
     setCurrentNotification(notification);
@@ -140,17 +165,63 @@ const NotificationSystem: React.FC<NotificationSystemProps> = ({ className }) =>
     clearAllTimeouts();
     
     setIsVisible(false);
+    setShowItemSelector(false);
     clearTimeoutRef.current = setTimeout(() => {
       setCurrentNotification(null);
       setCurrentIndex(prev => (prev + 1) % notifications.length);
     }, 300);
   }, [notifications.length, clearAllTimeouts]);
 
+  // Handle notification click to open item selector
+  const handleNotificationClick = useCallback(() => {
+    if (currentNotification && (currentNotification.relatedItems.length > 0 || foods.length > 0)) {
+      setShowItemSelector(true);
+      setItemSearchTerm('');
+    } else {
+      closeNotification();
+    }
+  }, [currentNotification, foods.length, closeNotification]);
+
+  // Add item to shopping list and close notification
+  const handleAddItem = useCallback((itemName: string) => {
+    if (onAddToShoppingList) {
+      onAddToShoppingList(itemName);
+    }
+    closeNotification();
+  }, [onAddToShoppingList, closeNotification]);
+
+  // Filter items for selector
+  const getFilteredItems = useCallback(() => {
+    let allItems: string[] = [];
+    
+    if (currentNotification) {
+      allItems = [...currentNotification.relatedItems];
+    }
+    
+    // Add matching foods if search term exists
+    if (itemSearchTerm.trim()) {
+      const matchingFoods = foods
+        .filter(food => 
+          food.name.toLowerCase().includes(itemSearchTerm.toLowerCase()) &&
+          !allItems.some(item => item.toLowerCase() === food.name.toLowerCase())
+        )
+        .map(food => food.name);
+      allItems = [...allItems, ...matchingFoods];
+    }
+    
+    return allItems.slice(0, 10); // Limit results
+  }, [currentNotification, foods, itemSearchTerm]);
+
   // Add new notification
   const addNotification = useCallback(() => {
     if (!newNotification.trim()) return;
 
-    const updatedNotifications = [...notifications, newNotification.trim()];
+    const newNotificationData: NotificationData = {
+      message: newNotification.trim(),
+      relatedItems: []
+    };
+    
+    const updatedNotifications = [...notifications, newNotificationData];
     setNotifications(updatedNotifications);
     saveNotificationsToStorage(updatedNotifications);
     setNewNotification('');
@@ -167,6 +238,24 @@ const NotificationSystem: React.FC<NotificationSystemProps> = ({ className }) =>
       setCurrentIndex(0);
     }
   }, [notifications, currentIndex]);
+
+  // Add item to notification's related items
+  const addRelatedItem = useCallback((notificationIndex: number, itemName: string) => {
+    const updatedNotifications = [...notifications];
+    if (!updatedNotifications[notificationIndex].relatedItems.includes(itemName)) {
+      updatedNotifications[notificationIndex].relatedItems.push(itemName);
+      setNotifications(updatedNotifications);
+      saveNotificationsToStorage(updatedNotifications);
+    }
+  }, [notifications]);
+
+  // Remove item from notification's related items
+  const removeRelatedItem = useCallback((notificationIndex: number, itemIndex: number) => {
+    const updatedNotifications = [...notifications];
+    updatedNotifications[notificationIndex].relatedItems.splice(itemIndex, 1);
+    setNotifications(updatedNotifications);
+    saveNotificationsToStorage(updatedNotifications);
+  }, [notifications]);
 
   // Export notifications
   const exportNotifications = useCallback(async () => {
@@ -197,7 +286,16 @@ const NotificationSystem: React.FC<NotificationSystemProps> = ({ className }) =>
       {currentNotification && (
         <div className={`notification-popup ${isVisible ? 'visible' : ''} ${className || ''}`}>
           <div className="notification-content">
-            <span className="notification-message">{currentNotification.message}</span>
+            <div 
+              className="notification-message-area"
+              onClick={handleNotificationClick}
+              style={{ cursor: currentNotification.relatedItems.length > 0 || foods.length > 0 ? 'pointer' : 'default' }}
+            >
+              <span className="notification-message">{currentNotification.message}</span>
+              {(currentNotification.relatedItems.length > 0 || foods.length > 0) && (
+                <div className="notification-hint">👆 Click para añadir artículos</div>
+              )}
+            </div>
             <button 
               className="notification-close"
               onClick={closeNotification}
@@ -206,6 +304,39 @@ const NotificationSystem: React.FC<NotificationSystemProps> = ({ className }) =>
               ✕
             </button>
           </div>
+          
+          {/* Item selector dropdown */}
+          {showItemSelector && (
+            <div className="notification-item-selector">
+              <input
+                type="text"
+                value={itemSearchTerm}
+                onChange={(e) => setItemSearchTerm(e.target.value)}
+                placeholder="Buscar o escribir artículo..."
+                className="item-search-input"
+                autoFocus
+              />
+              <div className="item-list">
+                {getFilteredItems().map((item, index) => (
+                  <button
+                    key={index}
+                    className="item-option"
+                    onClick={() => handleAddItem(item)}
+                  >
+                    {item}
+                  </button>
+                ))}
+                {itemSearchTerm.trim() && !getFilteredItems().includes(itemSearchTerm.trim()) && (
+                  <button
+                    className="item-option add-new"
+                    onClick={() => handleAddItem(itemSearchTerm.trim())}
+                  >
+                    ➕ Añadir "{itemSearchTerm.trim()}"
+                  </button>
+                )}
+              </div>
+            </div>
+          )}
         </div>
       )}
 
@@ -267,14 +398,60 @@ const NotificationSystem: React.FC<NotificationSystemProps> = ({ className }) =>
             <div className="notifications-list">
               {notifications.map((notification, index) => (
                 <div key={index} className="notification-item">
-                  <span className="notification-text">{notification}</span>
-                  <button
-                    className="delete-notification-btn"
-                    onClick={() => deleteNotification(index)}
-                    title="Eliminar notificación"
-                  >
-                    🗑️
-                  </button>
+                  <div className="notification-main">
+                    <span className="notification-text">{notification.message}</span>
+                    <button
+                      className="delete-notification-btn"
+                      onClick={() => deleteNotification(index)}
+                      title="Eliminar notificación"
+                    >
+                      🗑️
+                    </button>
+                  </div>
+                  
+                  {/* Related items section */}
+                  <div className="related-items-section">
+                    <div className="related-items-header">
+                      <span className="items-count">{notification.relatedItems.length} artículos</span>
+                      <button
+                        className="toggle-items-btn"
+                        onClick={() => setEditingIndex(editingIndex === index ? null : index)}
+                      >
+                        {editingIndex === index ? '▲' : '▼'}
+                      </button>
+                    </div>
+                    
+                    {editingIndex === index && (
+                      <div className="related-items-manager">
+                        <div className="add-item-section">
+                          <input
+                            type="text"
+                            placeholder="Añadir artículo relacionado..."
+                            className="add-item-input"
+                            onKeyPress={(e) => {
+                              if (e.key === 'Enter' && e.currentTarget.value.trim()) {
+                                addRelatedItem(index, e.currentTarget.value.trim());
+                                e.currentTarget.value = '';
+                              }
+                            }}
+                          />
+                        </div>
+                        <div className="items-list">
+                          {notification.relatedItems.map((item, itemIndex) => (
+                            <div key={itemIndex} className="related-item">
+                              <span>{item}</span>
+                              <button
+                                className="remove-item-btn"
+                                onClick={() => removeRelatedItem(index, itemIndex)}
+                              >
+                                ✕
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
                 </div>
               ))}
             </div>
