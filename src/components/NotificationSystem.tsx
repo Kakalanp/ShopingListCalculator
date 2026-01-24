@@ -63,8 +63,8 @@ const NotificationSystem: React.FC<NotificationSystemProps> = ({
   const [showManager, setShowManager] = useState(false);
   const [newNotification, setNewNotification] = useState('');
   const [showItemSelector, setShowItemSelector] = useState(false);
-  const [itemSearchTerm, setItemSearchTerm] = useState('');
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
+  const [isInteracting, setIsInteracting] = useState(false);
 
   // Refs to store timeout IDs
   const hideTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -86,7 +86,8 @@ const NotificationSystem: React.FC<NotificationSystemProps> = ({
 
   // Show next notification
   const showNextNotification = useCallback(() => {
-    if (notifications.length === 0 || isPaused) return;
+    const shouldPause = isPaused || isInteracting || showManager || showItemSelector;
+    if (notifications.length === 0 || shouldPause) return;
 
     // Clear any existing timeouts first
     clearAllTimeouts();
@@ -109,11 +110,12 @@ const NotificationSystem: React.FC<NotificationSystemProps> = ({
         setCurrentIndex(prev => (prev + 1) % notifications.length);
       }, 300); // Wait for fade-out animation
     }, 5000);
-  }, [notifications, currentIndex, isPaused, clearAllTimeouts]);
+  }, [notifications, currentIndex, isPaused, isInteracting, showManager, showItemSelector, clearAllTimeouts]);
 
   // Timer for showing notifications every 7 seconds
   useEffect(() => {
-    if (notifications.length === 0 || isPaused) {
+    const shouldPause = notifications.length === 0 || isPaused || isInteracting || showManager || showItemSelector;
+    if (shouldPause) {
       // Clear existing intervals when paused or no notifications
       if (intervalRef.current) {
         clearInterval(intervalRef.current);
@@ -157,7 +159,7 @@ const NotificationSystem: React.FC<NotificationSystemProps> = ({
         initialTimeoutRef.current = null;
       }
     };
-  }, [notifications, currentNotification, showNextNotification, isPaused]);
+  }, [notifications, currentNotification, showNextNotification, isPaused, isInteracting, showManager, showItemSelector]);
 
   // Close current notification
   const closeNotification = useCallback(() => {
@@ -166,51 +168,66 @@ const NotificationSystem: React.FC<NotificationSystemProps> = ({
     
     setIsVisible(false);
     setShowItemSelector(false);
+    setIsInteracting(false);
     clearTimeoutRef.current = setTimeout(() => {
       setCurrentNotification(null);
       setCurrentIndex(prev => (prev + 1) % notifications.length);
     }, 300);
   }, [notifications.length, clearAllTimeouts]);
 
-  // Handle notification click to open item selector
+  // Handle notification click to toggle item selector
   const handleNotificationClick = useCallback(() => {
     if (currentNotification && (currentNotification.relatedItems.length > 0 || foods.length > 0)) {
-      setShowItemSelector(true);
-      setItemSearchTerm('');
+      if (showItemSelector) {
+        // Close the selector and restart timer for current notification
+        setShowItemSelector(false);
+        setIsInteracting(false);
+        // Restart timer for current notification
+        setIsVisible(true);
+        hideTimeoutRef.current = setTimeout(() => {
+          setIsVisible(false);
+          clearTimeoutRef.current = setTimeout(() => {
+            setCurrentNotification(null);
+            setCurrentIndex(prev => (prev + 1) % notifications.length);
+          }, 300);
+        }, 5000);
+      } else {
+        // Open the selector and clear auto-hide timeout
+        clearAllTimeouts();
+        setShowItemSelector(true);
+        setIsInteracting(true);
+      }
     } else {
       closeNotification();
     }
-  }, [currentNotification, foods.length, closeNotification]);
+  }, [currentNotification, foods.length, showItemSelector, notifications.length, clearAllTimeouts]);
 
-  // Add item to shopping list and close notification
+  // Add item to shopping list and restart current notification timer
   const handleAddItem = useCallback((itemName: string) => {
     if (onAddToShoppingList) {
       onAddToShoppingList(itemName);
     }
-    closeNotification();
-  }, [onAddToShoppingList, closeNotification]);
+    // Close selector and restart timer for current notification
+    setShowItemSelector(false);
+    setIsInteracting(false);
+    // Restart timer for current notification
+    setIsVisible(true);
+    hideTimeoutRef.current = setTimeout(() => {
+      setIsVisible(false);
+      clearTimeoutRef.current = setTimeout(() => {
+        setCurrentNotification(null);
+        setCurrentIndex(prev => (prev + 1) % notifications.length);
+      }, 300);
+    }, 5000);
+  }, [onAddToShoppingList, notifications.length]);
 
-  // Filter items for selector
-  const getFilteredItems = useCallback(() => {
-    let allItems: string[] = [];
-    
+  // Get items for selector (only related items, no search)
+  const getItemsForSelector = useCallback(() => {
     if (currentNotification) {
-      allItems = [...currentNotification.relatedItems];
+      return currentNotification.relatedItems;
     }
-    
-    // Add matching foods if search term exists
-    if (itemSearchTerm.trim()) {
-      const matchingFoods = foods
-        .filter(food => 
-          food.name.toLowerCase().includes(itemSearchTerm.toLowerCase()) &&
-          !allItems.some(item => item.toLowerCase() === food.name.toLowerCase())
-        )
-        .map(food => food.name);
-      allItems = [...allItems, ...matchingFoods];
-    }
-    
-    return allItems.slice(0, 10); // Limit results
-  }, [currentNotification, foods, itemSearchTerm]);
+    return [];
+  }, [currentNotification]);
 
   // Add new notification
   const addNotification = useCallback(() => {
@@ -284,7 +301,19 @@ const NotificationSystem: React.FC<NotificationSystemProps> = ({
     <>
       {/* Floating notification */}
       {currentNotification && (
-        <div className={`notification-popup ${isVisible ? 'visible' : ''} ${className || ''}`}>
+        <div 
+          className={`notification-popup ${isVisible ? 'visible' : ''} ${className || ''}`}
+          onMouseEnter={() => {
+            setIsInteracting(true);
+            // Clear auto-hide timeout when hovering
+            clearAllTimeouts();
+          }}
+          onMouseLeave={() => {
+            if (!showItemSelector) {
+              setIsInteracting(false);
+            }
+          }}
+        >
           <div className="notification-content">
             <div 
               className="notification-message-area"
@@ -293,7 +322,9 @@ const NotificationSystem: React.FC<NotificationSystemProps> = ({
             >
               <span className="notification-message">{currentNotification.message}</span>
               {(currentNotification.relatedItems.length > 0 || foods.length > 0) && (
-                <div className="notification-hint">👆 Click para añadir artículos</div>
+                <div className="notification-hint">
+                  👆 {showItemSelector ? 'Click para colapsar lista' : 'Click para añadir artículos'}
+                </div>
               )}
             </div>
             <button 
@@ -308,16 +339,8 @@ const NotificationSystem: React.FC<NotificationSystemProps> = ({
           {/* Item selector dropdown */}
           {showItemSelector && (
             <div className="notification-item-selector">
-              <input
-                type="text"
-                value={itemSearchTerm}
-                onChange={(e) => setItemSearchTerm(e.target.value)}
-                placeholder="Buscar o escribir artículo..."
-                className="item-search-input"
-                autoFocus
-              />
               <div className="item-list">
-                {getFilteredItems().map((item, index) => (
+                {getItemsForSelector().map((item, index) => (
                   <button
                     key={index}
                     className="item-option"
@@ -326,13 +349,10 @@ const NotificationSystem: React.FC<NotificationSystemProps> = ({
                     {item}
                   </button>
                 ))}
-                {itemSearchTerm.trim() && !getFilteredItems().includes(itemSearchTerm.trim()) && (
-                  <button
-                    className="item-option add-new"
-                    onClick={() => handleAddItem(itemSearchTerm.trim())}
-                  >
-                    ➕ Añadir "{itemSearchTerm.trim()}"
-                  </button>
+                {getItemsForSelector().length === 0 && (
+                  <div className="no-items-message">
+                    No hay artículos relacionados configurados
+                  </div>
                 )}
               </div>
             </div>
@@ -360,7 +380,14 @@ const NotificationSystem: React.FC<NotificationSystemProps> = ({
 
       {/* Management modal */}
       {showManager && (
-        <div className="notification-manager-overlay">
+        <div 
+          className="notification-manager-overlay"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) {
+              setShowManager(false);
+            }
+          }}
+        >
           <div className="notification-manager">
             <div className="notification-manager-header">
               <h3>Cosas que Siempre Olvido</h3>
