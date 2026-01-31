@@ -328,7 +328,11 @@ const ShoppingList: React.FC = () => {
             </div>
             
             <div className="foods-sidebar">
-              <CommonFoodSupplies foods={foods} onFoodsChange={handleFoodsChange} />
+              <CommonFoodSupplies 
+                foods={foods} 
+                onFoodsChange={handleFoodsChange} 
+                shoppingItems={items}
+              />
             </div>
             
             <div className="shopping-list-section">

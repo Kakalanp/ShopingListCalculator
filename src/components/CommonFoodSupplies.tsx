@@ -13,20 +13,28 @@ interface CommonFoodSuppliesProps {
   className?: string;
   foods: FoodSupply[];
   onFoodsChange: (foods: FoodSupply[]) => void;
+  shoppingItems?: Array<{ name: string; }>;
 }
 
-const CommonFoodSupplies: React.FC<CommonFoodSuppliesProps> = ({ className, foods, onFoodsChange }) => {
+const CommonFoodSupplies: React.FC<CommonFoodSuppliesProps> = ({ 
+  className, 
+  foods, 
+  onFoodsChange,
+  shoppingItems = []
+}) => {
   const [isContainerCollapsed, setIsContainerCollapsed] = useState(false);
   const [copySuccess, setCopySuccess] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
 
-  // Filter foods by search term, then sort alphabetically
+  // Filter foods by search term and exclude items already in shopping list, then sort alphabetically
   const filteredAndSortedFoods = useMemo(() => {
+    const shoppingItemNames = shoppingItems.map(item => item.name.toLowerCase());
     const filtered = foods.filter(food => 
-      food.name.toLowerCase().includes(searchTerm.toLowerCase())
+      food.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
+      !shoppingItemNames.includes(food.name.toLowerCase())
     );
     return filtered.sort((a, b) => a.name.localeCompare(b.name));
-  }, [foods, searchTerm]);
+  }, [foods, searchTerm, shoppingItems]);
 
   const deleteFood = (foodId: string) => {
     onFoodsChange(foods.filter(food => food.id !== foodId));
