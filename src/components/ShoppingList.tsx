@@ -362,7 +362,7 @@ const ShoppingList: React.FC = () => {
                         onClick={copyShoppingList}
                         title={copySuccess ? '¡Copiado!' : 'Copiar lista de compras al portapapeles'}
                       >
-                        {copySuccess ? '✓' : '📋'} Compras
+                        {copySuccess ? '✓' : '📋'} Copiar
                       </button>
                     )}
                   </div>

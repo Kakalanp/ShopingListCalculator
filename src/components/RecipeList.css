@@ -392,15 +392,19 @@
   color: #495057;
   border: 1px solid #e9ecef;
   display: flex;
+  flex-direction: column;
   justify-content: space-between;
   align-items: center;
-  gap: 12px;
-}
 
-.selected-meals-counter > div:first-child {
-  font-weight: 600;
-  color: #1976d2;
-  margin-bottom: 8px;
+  > div:first-child {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+
+    p {
+      margin: 0;
+    }
+  }
 }
 
 .selected-meals-preview {
@@ -408,13 +412,43 @@
   flex-wrap: wrap;
   gap: 6px;
   margin-top: 8px;
+  justify-content: center;
+  overflow: hidden;
+
+  span {
+    font-size: 0.85rem;
+    font-weight: 500;
+    padding: 4px 8px;
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 12px;
+    border: 1px solid currentColor;
+  }
 }
 
-.meal-preview {
-  font-size: 0.85rem;
-  font-weight: 500;
+.selected-meals-preview.collapsed {
+  max-height: 0;
+  margin-top: 0;
+  opacity: 0;
+  transform: scaleY(0);
+}
+
+.collapse-selected-meals-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.2rem;
+  color: #6c757d;
   padding: 4px 8px;
-  background: rgba(255, 255, 255, 0.8);
-  border-radius: 12px;
-  border: 1px solid currentColor;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 4px;
+}
+
+.collapse-selected-meals-btn:hover {
+  background: rgba(108, 117, 125, 0.1);
+  color: #495057;
 }

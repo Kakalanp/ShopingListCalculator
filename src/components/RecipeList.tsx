@@ -27,11 +27,11 @@ export interface FoodSupply {
   emoji: string;
 }
 
-const RecipeList: React.FC<RecipeListProps> = ({ 
-  recipes, 
-  onRecipesChange, 
-  selectedRecipes, 
-  onRecipeSelect, 
+const RecipeList: React.FC<RecipeListProps> = ({
+  recipes,
+  onRecipesChange,
+  selectedRecipes,
+  onRecipeSelect,
   rainbowColors,
   foods,
   onFoodsChange,
@@ -43,9 +43,10 @@ const RecipeList: React.FC<RecipeListProps> = ({
 }) => {
   const [isContainerCollapsed, setIsContainerCollapsed] = useState(false);
   const [copySuccess, setCopySuccess] = useState(false);
-  const [showIngredients, setShowIngredients] = useState<{[key: string]: boolean}>({});
+  const [showIngredients, setShowIngredients] = useState<{ [key: string]: boolean }>({});
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingRecipe, setEditingRecipe] = useState<Recipe | null>(null);
+  const [isSelectedMealsCollapsed, setIsSelectedMealsCollapsed] = useState(false);
 
   const deleteRecipe = (recipeId: string) => {
     const updatedRecipes = recipes.filter(recipe => recipe.id !== recipeId);
@@ -54,7 +55,7 @@ const RecipeList: React.FC<RecipeListProps> = ({
 
   const handleSaveRecipe = (newRecipe: Recipe) => {
     if (editingRecipe) {
-      const updatedRecipes = recipes.map(recipe => 
+      const updatedRecipes = recipes.map(recipe =>
         recipe.id === editingRecipe.id ? newRecipe : recipe
       );
       onRecipesChange(updatedRecipes);
@@ -103,51 +104,61 @@ const RecipeList: React.FC<RecipeListProps> = ({
         <h2>Recetas</h2>
         <span className={`container-expand-icon ${isContainerCollapsed ? '' : 'expanded'}`}>◀</span>
       </div>
-      
+
       <div className={`container-content ${isContainerCollapsed ? 'collapsed' : 'expanded'}`}>
         <div className="selected-meals-counter">
-          <span>Comidas Seleccionadas: {selectedRecipes.length}/7</span>
-          {meals.length > 0 && (
-            <button 
-              className={`copy-btn ${copyMealsSuccess ? 'success' : ''}`}
-              onClick={copyMealList}
-              title={copyMealsSuccess ? '¡Copiado!' : 'Copiar lista de comidas'}
-            >
-              {copyMealsSuccess ? '✓' : '🍽️'} Comidas
-            </button>
-          )}
+          <div>
+            <p>Comidas Seleccionadas: {selectedRecipes.length}/7</p>
+            {meals.length > 0 && (
+              <button
+                className={`copy-btn ${copyMealsSuccess ? 'success' : ''}`}
+                onClick={copyMealList}
+                title={copyMealsSuccess ? '¡Copiado!' : 'Copiar lista de comidas'}
+              >
+                {copyMealsSuccess ? '✓' : '🍽️'} Copiar
+              </button>
+            )}
+          </div>
           {selectedRecipes.length > 0 && (
-            <div className="selected-meals-preview">
-              {selectedRecipes.map((recipeId, index) => {
-                const recipe = recipes.find(r => r.id === recipeId);
-                if (!recipe) return null;
-                return (
-                  <span 
-                    key={recipeId} 
-                    className="meal-preview"
-                    style={{ color: rainbowColors[index] }}
-                  >
-                    {recipe.emoji} {recipe.name}
-                  </span>
-                );
-              })}
-            </div>
+            <>
+              <div className={`selected-meals-preview ${isSelectedMealsCollapsed ? 'collapsed' : ''}`}>
+                {selectedRecipes.map((recipeId, index) => {
+                  const recipe = recipes.find(r => r.id === recipeId);
+                  if (!recipe) return null;
+                  return (
+                    <span
+                      key={recipeId}
+                      style={{ color: rainbowColors[index] }}
+                    >
+                      {recipe.emoji} {recipe.name}
+                    </span>
+                  );
+                })}
+              </div>
+              <button 
+                className="collapse-selected-meals-btn"
+                onClick={() => setIsSelectedMealsCollapsed(!isSelectedMealsCollapsed)}
+                title={isSelectedMealsCollapsed ? 'Mostrar comidas seleccionadas' : 'Ocultar comidas seleccionadas'}
+              >
+                {isSelectedMealsCollapsed ? '▲' : '▼'}
+              </button>
+            </>
           )}
         </div>
-        
-        <button 
+
+        <button
           onClick={() => setIsModalOpen(true)}
           className="add-recipe-btn"
         >
           + Añadir Nueva Receta
         </button>
-        
+
         <div className="recipes-grid expanded">
           {recipes.map((recipe, index) => {
             const isSelected = selectedRecipes.includes(recipe.id);
             const selectionIndex = selectedRecipes.indexOf(recipe.id);
             const borderColor = isSelected ? rainbowColors[selectionIndex % rainbowColors.length] : 'transparent';
-            
+
             return (
               <div
                 key={recipe.id}
@@ -159,7 +170,7 @@ const RecipeList: React.FC<RecipeListProps> = ({
                   <span className="recipe-emoji">{recipe.emoji}</span>
                   <div className="recipe-details">
                     <div className="recipe-name">{recipe.name}</div>
-                    <div 
+                    <div
                       className="recipe-count clickable"
                       onClick={(e) => {
                         e.stopPropagation();
@@ -181,7 +192,7 @@ const RecipeList: React.FC<RecipeListProps> = ({
                   </div>
                 </div>
                 {isSelected && (
-                  <div 
+                  <div
                     className="selection-number"
                     style={{ backgroundColor: borderColor }}
                   >
@@ -189,7 +200,7 @@ const RecipeList: React.FC<RecipeListProps> = ({
                   </div>
                 )}
                 <div className="recipe-buttons">
-                  <button 
+                  <button
                     className="edit-recipe-btn"
                     onClick={(e) => {
                       e.stopPropagation();
@@ -199,7 +210,7 @@ const RecipeList: React.FC<RecipeListProps> = ({
                   >
                     ✏️
                   </button>
-                  <button 
+                  <button
                     className="delete-recipe-btn"
                     onClick={(e) => {
                       e.stopPropagation();
@@ -214,9 +225,9 @@ const RecipeList: React.FC<RecipeListProps> = ({
             );
           })}
         </div>
-        
+
         {recipes.length > 0 && (
-          <button 
+          <button
             className={`copy-recipes-btn ${copySuccess ? 'success' : ''}`}
             onClick={copyRecipesJSON}
             title={copySuccess ? '¡Copiado!' : 'Copiar JSON de recetas al portapapeles'}
@@ -225,7 +236,7 @@ const RecipeList: React.FC<RecipeListProps> = ({
           </button>
         )}
       </div>
-      
+
       <RecipeModal
         isOpen={isModalOpen}
         onClose={handleCloseModal}

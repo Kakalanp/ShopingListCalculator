@@ -51,8 +51,6 @@ const CommonFoodSupplies: React.FC<CommonFoodSuppliesProps> = ({ className, food
       </div>
       
       <div className={`container-content ${isContainerCollapsed ? 'collapsed' : 'expanded'}`}>
-        <p className="drag-instruction">Drag items to your shopping list</p>
-        
         <div className="common-foods-controls">
           <input
             type="text"
