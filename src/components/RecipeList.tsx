@@ -101,15 +101,8 @@ const RecipeList: React.FC<RecipeListProps> = ({
   return (
     <div className={`recipe-container ${className || ''} ${isContainerCollapsed ? 'collapsed' : ''}`}>
       <div className="container-header" onClick={() => setIsContainerCollapsed(!isContainerCollapsed)}>
-        <h2>Recetas</h2>
-        <span className={`container-expand-icon ${isContainerCollapsed ? '' : 'expanded'}`}>◀</span>
-      </div>
-
-      <div className={`container-content ${isContainerCollapsed ? 'collapsed' : 'expanded'}`}>
-        <div className="selected-meals-counter">
-          <div>
-            <p>Comidas Seleccionadas: {selectedRecipes.length}/7</p>
-            {meals.length > 0 && (
+        <h2>Recetas{selectedRecipes.length > 0 ? `: ${selectedRecipes.length}/7` : ''}</h2>
+        {meals.length > 0 && (
               <button
                 className={`copy-btn ${copyMealsSuccess ? 'success' : ''}`}
                 onClick={copyMealList}
@@ -118,8 +111,11 @@ const RecipeList: React.FC<RecipeListProps> = ({
                 {copyMealsSuccess ? '✓' : '🍽️'} Copiar
               </button>
             )}
-          </div>
-          {selectedRecipes.length > 0 && (
+        <span className={`container-expand-icon ${isContainerCollapsed ? '' : 'expanded'}`}>◀</span>
+      </div>
+
+      <div className={`container-content ${isContainerCollapsed ? 'collapsed' : 'expanded'}`}>
+        {selectedRecipes.length > 0 && (
             <>
               <div className={`selected-meals-preview ${isSelectedMealsCollapsed ? 'collapsed' : ''}`}>
                 {selectedRecipes.map((recipeId, index) => {
@@ -144,7 +140,6 @@ const RecipeList: React.FC<RecipeListProps> = ({
               </button>
             </>
           )}
-        </div>
 
         <button
           onClick={() => setIsModalOpen(true)}
