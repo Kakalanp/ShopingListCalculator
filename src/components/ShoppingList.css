@@ -26,12 +26,6 @@
   font-weight: 600;
 }
 
-.header-actions {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
-
 .shopping-list-header {
   background: #f8f9fa;
   border-radius: 12px 12px 0 0;
@@ -108,39 +102,6 @@
   font-size: 0.95rem;
 }
 
-.copy-btn {
-  background: #3498db;
-  border: none;
-  border-radius: 6px;
-  padding: 8px 12px;
-  color: white;
-  cursor: pointer;
-  font-size: 1rem;
-  transition: all 0.2s ease;
-  min-width: 40px;
-  height: 36px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.copy-btn:hover {
-  background: #2980b9;
-  transform: translateY(-1px);
-}
-
-.copy-btn:active {
-  transform: translateY(0);
-}
-
-.copy-btn.success {
-  background: #27ae60;
-}
-
-.copy-btn.success:hover {
-  background: #229954;
-}
-
 .total-cost {
   font-weight: 600;
   color: #27ae60;
@@ -194,27 +155,6 @@
   flex: 1;
   min-width: 300px;
   max-width: 500px;
-}
-
-.items-container {
-  min-height: 100px;
-  border-radius: 8px;
-  transition: background-color 0.2s ease;
-}
-
-.items-container.dragging-over {
-  background-color: #f8f9fa;
-  border: 2px dashed #3498db;
-}
-
-.draggable-item {
-  margin-bottom: 12px;
-  transition: transform 0.2s ease;
-}
-
-.draggable-item.dragging {
-  transform: rotate(2deg);
-  opacity: 0.9;
 }
 
 .empty-state {

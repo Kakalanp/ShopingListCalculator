@@ -14,21 +14,6 @@
   width: 60px;
 }
 
-.container-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 20px;
-  cursor: pointer;
-  background: #f8f9fa;
-  border-bottom: 1px solid #e1e5e9;
-  transition: all 0.2s ease;
-}
-
-.container-header:hover {
-  background: #e9ecef;
-}
-
 .common-foods-container.collapsed .container-header {
   padding: 20px 15px;
   justify-content: center;
@@ -44,34 +29,6 @@
 
 .common-foods-container.collapsed h2 {
   display: none;
-}
-
-.container-expand-icon {
-  font-size: 1.2rem;
-  color: #7f8c8d;
-  transition: all 0.3s ease;
-}
-
-.container-expand-icon.expanded {
-  transform: rotate(180deg);
-  color: #3498db;
-}
-
-.container-content {
-  padding: 20px;
-  transition: all 0.3s ease;
-  overflow: hidden;
-}
-
-.container-content.collapsed {
-  max-height: 0;
-  padding: 0 20px;
-  opacity: 0;
-}
-
-.container-content.expanded {
-  max-height: 80vh;
-  opacity: 1;
 }
 
 .drag-instruction {
@@ -215,8 +172,6 @@
 }
 
 .foods-container {
-  max-height: 60vh;
-  overflow-y: auto;
   transition: all 0.3s ease;
 }
 
@@ -250,15 +205,8 @@
 }
 
 .drag-section {
-  display: flex;
-  align-items: center;
   gap: 10px;
   flex: 1;
-  cursor: grab;
-}
-
-.drag-section:active {
-  cursor: grabbing;
 }
 
 .food-emoji {
@@ -297,24 +245,7 @@
   transform: scale(0.95);
 }
 
-/* Custom scrollbar */
-.foods-container::-webkit-scrollbar {
-  width: 6px;
-}
-
-.foods-container::-webkit-scrollbar-track {
-  background: #f1f1f1;
-  border-radius: 3px;
-}
-
-.foods-container::-webkit-scrollbar-thumb {
-  background: #bdc3c7;
-  border-radius: 3px;
-}
-
-.foods-container::-webkit-scrollbar-thumb:hover {
-  background: #95a5a6;
-}
+/* Scrollbar styles inherited from globals.css */
 
 /* Responsive adjustments */
 @media (max-width: 768px) {

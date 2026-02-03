@@ -1,0 +1,201 @@
+/* Global Shared CSS Classes */
+
+/* ============================================
+   COLLAPSIBLE CONTAINER STYLES
+   ============================================ */
+
+.container-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  cursor: pointer;
+  background: #f8f9fa;
+  border-bottom: 1px solid #e1e5e9;
+  transition: all 0.2s ease;
+}
+
+.container-header:hover {
+  background: #e9ecef;
+}
+
+.container-expand-icon {
+  font-size: 1.2rem;
+  color: #7f8c8d;
+  transition: all 0.3s ease;
+}
+
+.container-expand-icon.expanded {
+  transform: rotate(180deg);
+  color: #3498db;
+}
+
+.container-content {
+  padding: 20px;
+  transition: all 0.3s ease;
+  overflow: hidden;
+}
+
+.container-content.collapsed {
+  max-height: 0;
+  padding: 0 20px;
+  opacity: 0;
+}
+
+.container-content.expanded {
+  max-height: 80vh;
+  opacity: 1;
+}
+
+/* ============================================
+   BUTTON STYLES
+   ============================================ */
+
+.copy-btn {
+  background: #3498db;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 12px;
+  color: white;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: all 0.2s ease;
+  min-width: 40px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.copy-btn:hover {
+  background: #2980b9;
+  transform: translateY(-1px);
+}
+
+.copy-btn:active {
+  transform: translateY(0);
+}
+
+.copy-btn.success {
+  background: #27ae60;
+}
+
+.copy-btn.success:hover {
+  background: #229954;
+}
+
+.header-actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+/* ============================================
+   DRAG & DROP STYLES
+   ============================================ */
+
+.drag-handle {
+  cursor: grab;
+  padding: 4px;
+  color: #95a5a6;
+  font-size: 1.2rem;
+  transition: color 0.2s ease;
+  user-select: none;
+}
+
+.drag-handle:hover {
+  color: #3498db;
+}
+
+.drag-handle:active {
+  cursor: grabbing;
+}
+
+.drag-section {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: grab;
+  transition: all 0.2s ease;
+}
+
+.drag-section:active {
+  cursor: grabbing;
+  transform: scale(1.02);
+}
+
+/* ============================================
+   EMPTY STATE STYLES
+   ============================================ */
+
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: #95a5a6;
+  font-size: 1.1rem;
+}
+
+.empty-state p {
+  margin: 8px 0;
+}
+
+.empty-state p:first-child {
+  font-weight: 600;
+  font-size: 1.3rem;
+}
+
+.empty-meals {
+  text-align: center;
+  padding: 40px 20px;
+  color: #95a5a6;
+  font-size: 1rem;
+}
+
+.empty-meals p {
+  margin: 8px 0;
+}
+
+.empty-meals p:first-child {
+  font-weight: 600;
+  font-size: 1.2rem;
+}
+
+/* ============================================
+   CONTAINER & LIST STYLES
+   ============================================ */
+
+.items-container {
+  min-height: 100px;
+  border-radius: 8px;
+  transition: background-color 0.2s ease;
+}
+
+.items-container.dragging-over {
+  background-color: #f8f9fa;
+  border: 2px dashed #3498db;
+}
+
+.foods-container {
+  display: grid;
+  gap: 12px;
+  max-height: 60vh;
+  overflow-y: auto;
+  padding-right: 8px;
+}
+
+.foods-container::-webkit-scrollbar {
+  width: 6px;
+}
+
+.foods-container::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.foods-container::-webkit-scrollbar-thumb {
+  background: #d0d0d0;
+  border-radius: 3px;
+}
+
+.foods-container::-webkit-scrollbar-thumb:hover {
+  background: #a0a0a0;
+}

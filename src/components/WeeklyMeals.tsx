@@ -1,6 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import { Droppable, Draggable } from '@hello-pangea/dnd';
 import { Recipe } from './RecipeList';
+import '../styles/globals.css';
 import './WeeklyMeals.css';
 
 interface WeeklyMealsProps {

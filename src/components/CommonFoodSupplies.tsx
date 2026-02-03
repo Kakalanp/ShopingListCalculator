@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { Draggable, Droppable } from '@hello-pangea/dnd';
 import AddNewFood from './AddNewFood';
+import '../styles/globals.css';
 import './CommonFoodSupplies.css';
 
 export interface FoodSupply {

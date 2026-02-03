@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { DraggableProvidedDragHandleProps } from '@hello-pangea/dnd';
 import { ShoppingItem } from '../types/types';
+import '../styles/globals.css';
 import './ShoppingItemComponent.css';
 
 interface ShoppingItemComponentProps {

@@ -2,6 +2,7 @@ import React, { useState, useCallback, useEffect } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { DragDropContext, Droppable, Draggable, DropResult } from '@hello-pangea/dnd';
 import { ShoppingItem } from '../types/types';
+import '../styles/globals.css';
 import ShoppingItemComponent from './ShoppingItemComponent';
 import CommonFoodSupplies, { FoodSupply } from './CommonFoodSupplies';
 import RecipeList, { Recipe } from './RecipeList';

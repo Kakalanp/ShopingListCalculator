@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import RecipeModal from './RecipeModal';
 import type { Recipe } from './RecipeModal';
+import '../styles/globals.css';
 import './RecipeList.css';
 
 export type { Recipe } from './RecipeModal';
