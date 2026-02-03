@@ -459,6 +459,22 @@
   background: #047857;
 }
 
+.reset-btn {
+  padding: 8px 16px;
+  background: #dc2626;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.reset-btn:hover {
+  background: #b91c1c;
+}
+
 .notification-stats {
   font-size: 13px;
   color: #6b7280;

@@ -21,10 +21,27 @@ interface NotificationSystemProps {
   onAddToShoppingList?: (itemName: string) => void;
 }
 
-// Local storage key
+// Local storage keys
 const NOTIFICATIONS_STORAGE_KEY = 'shopping-app-notifications';
+const INTERACTED_NOTIFICATIONS_KEY = 'shopping-app-interacted-notifications';
 
 // Local storage utilities
+const loadInteractedNotifications = (): Set<string> => {
+  try {
+    const stored = localStorage.getItem(INTERACTED_NOTIFICATIONS_KEY);
+    return new Set(stored ? JSON.parse(stored) : []);
+  } catch {
+    return new Set();
+  }
+};
+
+const saveInteractedNotifications = (interacted: Set<string>) => {
+  try {
+    localStorage.setItem(INTERACTED_NOTIFICATIONS_KEY, JSON.stringify(Array.from(interacted)));
+  } catch (error) {
+    console.warn('Failed to save interacted notifications to localStorage:', error);
+  }
+};
 const loadNotificationsFromStorage = (): NotificationData[] => {
   try {
     const stored = localStorage.getItem(NOTIFICATIONS_STORAGE_KEY);
@@ -56,6 +73,7 @@ const NotificationSystem: React.FC<NotificationSystemProps> = ({
   onAddToShoppingList 
 }) => {
   const [notifications, setNotifications] = useState<NotificationData[]>(() => loadNotificationsFromStorage());
+  const [interactedNotifications, setInteractedNotifications] = useState<Set<string>>(() => loadInteractedNotifications());
   const [currentNotification, setCurrentNotification] = useState<Notification | null>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isVisible, setIsVisible] = useState(false);
@@ -92,7 +110,20 @@ const NotificationSystem: React.FC<NotificationSystemProps> = ({
     // Clear any existing timeouts first
     clearAllTimeouts();
 
-    const notificationData = notifications[currentIndex];
+    // Find next non-interacted notification
+    let nextIndex = currentIndex;
+    let attempts = 0;
+    while (interactedNotifications.has(notifications[nextIndex].message) && attempts < notifications.length) {
+      nextIndex = (nextIndex + 1) % notifications.length;
+      attempts++;
+    }
+
+    // If all notifications have been interacted with, skip
+    if (attempts >= notifications.length) {
+      return;
+    }
+
+    const notificationData = notifications[nextIndex];
     const notification: Notification = {
       id: uuidv4(),
       message: notificationData.message,
@@ -100,6 +131,7 @@ const NotificationSystem: React.FC<NotificationSystemProps> = ({
     };
 
     setCurrentNotification(notification);
+    setCurrentIndex(nextIndex);
     setIsVisible(true);
 
     // Auto-hide after 5 seconds
@@ -110,7 +142,7 @@ const NotificationSystem: React.FC<NotificationSystemProps> = ({
         setCurrentIndex(prev => (prev + 1) % notifications.length);
       }, 300); // Wait for fade-out animation
     }, 5000);
-  }, [notifications, currentIndex, isPaused, isInteracting, showManager, showItemSelector, clearAllTimeouts]);
+  }, [notifications, currentIndex, isPaused, isInteracting, showManager, showItemSelector, clearAllTimeouts, interactedNotifications]);
 
   // Timer for showing notifications every 7 seconds
   useEffect(() => {
@@ -161,10 +193,18 @@ const NotificationSystem: React.FC<NotificationSystemProps> = ({
     };
   }, [notifications, currentNotification, showNextNotification, isPaused, isInteracting, showManager, showItemSelector]);
 
-  // Close current notification
+  // Close current notification and mark as interacted
   const closeNotification = useCallback(() => {
     // Clear any pending timeouts to prevent conflicts
     clearAllTimeouts();
+    
+    // Mark current notification as interacted
+    if (currentNotification) {
+      const updatedInteracted = new Set(interactedNotifications);
+      updatedInteracted.add(currentNotification.message);
+      setInteractedNotifications(updatedInteracted);
+      saveInteractedNotifications(updatedInteracted);
+    }
     
     setIsVisible(false);
     setShowItemSelector(false);
@@ -173,7 +213,7 @@ const NotificationSystem: React.FC<NotificationSystemProps> = ({
       setCurrentNotification(null);
       setCurrentIndex(prev => (prev + 1) % notifications.length);
     }, 300);
-  }, [notifications.length, clearAllTimeouts]);
+  }, [notifications.length, clearAllTimeouts, currentNotification, interactedNotifications]);
 
   // Handle notification click to toggle item selector
   const handleNotificationClick = useCallback(() => {
@@ -202,11 +242,20 @@ const NotificationSystem: React.FC<NotificationSystemProps> = ({
     }
   }, [currentNotification, foods.length, showItemSelector, notifications.length, clearAllTimeouts]);
 
-  // Add item to shopping list and restart current notification timer
+  // Add item to shopping list, mark as interacted, and restart timer
   const handleAddItem = useCallback((itemName: string) => {
     if (onAddToShoppingList) {
       onAddToShoppingList(itemName);
     }
+    
+    // Mark current notification as interacted
+    if (currentNotification) {
+      const updatedInteracted = new Set(interactedNotifications);
+      updatedInteracted.add(currentNotification.message);
+      setInteractedNotifications(updatedInteracted);
+      saveInteractedNotifications(updatedInteracted);
+    }
+    
     // Close selector and restart timer for current notification
     setShowItemSelector(false);
     setIsInteracting(false);
@@ -219,7 +268,7 @@ const NotificationSystem: React.FC<NotificationSystemProps> = ({
         setCurrentIndex(prev => (prev + 1) % notifications.length);
       }, 300);
     }, 5000);
-  }, [onAddToShoppingList, notifications.length]);
+  }, [onAddToShoppingList, notifications.length, currentNotification, interactedNotifications]);
 
   // Get items for selector (only related items, no search)
   const getItemsForSelector = useCallback(() => {
@@ -284,6 +333,13 @@ const NotificationSystem: React.FC<NotificationSystemProps> = ({
       console.error('Failed to export notifications:', err);
     }
   }, [notifications]);
+
+  // Reset all interacted notifications
+  const resetInteractedNotifications = useCallback(() => {
+    setInteractedNotifications(new Set());
+    saveInteractedNotifications(new Set());
+    setCurrentIndex(0);
+  }, []);
 
   // Pause/Resume system
   const togglePause = useCallback(() => {
@@ -491,8 +547,15 @@ const NotificationSystem: React.FC<NotificationSystemProps> = ({
               >
                 📋 Exportar
               </button>
+              <button 
+                className="reset-btn"
+                onClick={resetInteractedNotifications}
+                title="Restaurar todas las notificaciones usadas"
+              >
+                🔄 Restaurar
+              </button>
               <div className="notification-stats">
-                {notifications.length} recordatorios
+                {notifications.length} recordatorios · {interactedNotifications.size} usados
               </div>
             </div>
           </div>
