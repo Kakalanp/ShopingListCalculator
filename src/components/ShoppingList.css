@@ -63,7 +63,6 @@
 
 .select-all-checkbox:disabled {
   cursor: not-allowed;
-  opacity: 0.5;
 }
 
 .item-count {
@@ -143,7 +142,6 @@
 }
 
 .recipes-sidebar,
-.meals-sidebar,
 .foods-sidebar {
   position: sticky;
   top: 20px;
@@ -186,7 +184,6 @@
   }
   
   .recipes-sidebar,
-  .meals-sidebar,
   .foods-sidebar {
     position: static;
     order: -1; /* Show sidebars first on mobile */

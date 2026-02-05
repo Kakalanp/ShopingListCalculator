@@ -53,7 +53,7 @@ const CommonFoodSupplies: React.FC<CommonFoodSuppliesProps> = ({
   };
 
   return (
-    <div className={`common-foods-container ${className || ''} ${isContainerCollapsed ? 'collapsed' : ''}`}>
+    <div className={`app-container common-foods-container ${className || ''} ${isContainerCollapsed ? 'collapsed' : ''}`}>
       <div className="container-header" onClick={() => setIsContainerCollapsed(!isContainerCollapsed)}>
         <h2>Artículos Comunes</h2>
         <span className={`container-expand-icon ${isContainerCollapsed ? '' : 'expanded'}`}>◀</span>

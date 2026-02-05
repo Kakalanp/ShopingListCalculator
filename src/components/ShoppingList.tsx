@@ -258,15 +258,6 @@ const ShoppingList: React.FC = () => {
       return;
     }
 
-    // Handle reordering within weekly meals
-    if (result.source.droppableId === 'weekly-meals' && result.destination.droppableId === 'weekly-meals') {
-      const newMeals = Array.from(meals);
-      const [reorderedMeal] = newMeals.splice(result.source.index, 1);
-      newMeals.splice(result.destination.index, 0, reorderedMeal);
-      handleMealsChange(newMeals);
-      return;
-    }
-
     // Handle drag from common foods to shopping list
     if (result.source.droppableId === 'common-foods' && result.destination.droppableId === 'shopping-list') {
       const draggedId = result.draggableId.replace('common-', '');

@@ -100,7 +100,7 @@ const RecipeList: React.FC<RecipeListProps> = ({
   };
 
   return (
-    <div className={`recipe-container ${className || ''} ${isContainerCollapsed ? 'collapsed' : ''}`}>
+    <div className={`app-container recipe-container ${className || ''} ${isContainerCollapsed ? 'collapsed' : ''}`}>
       <div className="container-header" onClick={() => setIsContainerCollapsed(!isContainerCollapsed)}>
         <h2>Recetas{selectedRecipes.length > 0 ? `: ${selectedRecipes.length}/7` : ''}</h2>
         {meals.length > 0 && (
